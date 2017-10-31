@@ -1,0 +1,25 @@
+﻿@{
+    Layout = "~/Views/_DialogLayout.cshtml";
+}
+@section Head{
+    <script src="~/areas/CNDS/js/ManageMetadata/newdomaindefinition.js"></script>
+}
+
+<article data-bind="css: {visible: true}">
+    <div class="form">
+        <div class="row">
+            <div class="col-sm-4">
+                <label>Title<em>*</em></label>
+                <input type="text" class="form-control" required data-bind="value:DomainTitle" />
+            </div>
+            <div class="col-sm-4">
+                <label>Data Type<em>*</em></label>
+                <input class="form-control" data-bind="kendoDropDownList: {value: DomainDataType, data: $root.DataTypes, dataTextField: 'text', dataValueField: 'value', optionLabel: { text: '<Not Selected>',  value: '-1' }}" required style="width:100%;" />
+            </div>
+        </div>
+    </div>
+    <nav class="footer">
+        <button class="btn btn-warning pull-right" style="margin-left:10px;" data-bind="click:onCancel"><span class="glyphicon glyphicon-remove" aria-hidden="true" ></span> Cancel</button>
+        <button class="btn btn-warning pull-right" data-bind="click:onSubmit"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Ok</button>
+    </nav>
+</article>

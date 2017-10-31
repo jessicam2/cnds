@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FE381DAC-8869-4DB5-BBFF-D531D8535530}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lpp.CNDS.Data</RootNamespace>
+    <AssemblyName>Lpp.CNDS.Data</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <Import Project="..\Build\Lpp.Dns.Base.Targets" />
+  <ItemGroup><Reference Include="Lpp.Utilities, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL"><SpecificVersion>False</SpecificVersion><HintPath>..\Dependencies\Lpp.Utilities.dll</HintPath></Reference><Reference Include="Lpp.Objects, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL"><SpecificVersion>False</SpecificVersion><HintPath>..\Dependencies\Lpp.Objects.dll</HintPath></Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions.Desktop, Version=1.0.168.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Primitives.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Build\CNDSCommonAssemblyInfo.cs">
+      <Link>Properties\CNDSCommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Access\DataSourceDomainAccess.cs" />
+    <Compile Include="Access\DomainAccess.cs" />
+    <Compile Include="Access\OrganizationDomainAccess.cs" />
+    <Compile Include="Access\UserDomainAccess.cs" />
+    <Compile Include="DataContext.cs" />
+    <Compile Include="DataSources\Adapter.cs" />
+    <Compile Include="DataSources\DataSource.cs" />
+    <Compile Include="Domains\DataSourceDomainData.cs" />
+    <Compile Include="Domains\Domain.cs" />
+    <Compile Include="Domains\DomainData.cs" />
+    <Compile Include="Domains\DomainReference.cs" />
+    <Compile Include="Domains\DomainUse.cs" />
+    <Compile Include="Domains\OrganizationDomainData.cs" />
+    <Compile Include="Domains\UserDomainData.cs" />
+    <Compile Include="Migrations\201608021607401_INIT.cs" />
+    <Compile Include="Migrations\201608021607401_INIT.Designer.cs">
+      <DependentUpon>201608021607401_INIT.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608041618125_AddTriggers.cs" />
+    <Compile Include="Migrations\201608041618125_AddTriggers.Designer.cs">
+      <DependentUpon>201608041618125_AddTriggers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201609131432144_AddActiveAndDeletedFlags.cs" />
+    <Compile Include="Migrations\201609131432144_AddActiveAndDeletedFlags.Designer.cs">
+      <DependentUpon>201609131432144_AddActiveAndDeletedFlags.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201609231345161_AddDeletedFlagForDomainUse.cs" />
+    <Compile Include="Migrations\201609231345161_AddDeletedFlagForDomainUse.Designer.cs">
+      <DependentUpon>201609231345161_AddDeletedFlagForDomainUse.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610111242264_AddDeletedToDomain.cs" />
+    <Compile Include="Migrations\201610111242264_AddDeletedToDomain.Designer.cs">
+      <DependentUpon>201610111242264_AddDeletedToDomain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610141747361_AddDomainAccessTables.cs" />
+    <Compile Include="Migrations\201610141747361_AddDomainAccessTables.Designer.cs">
+      <DependentUpon>201610141747361_AddDomainAccessTables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610141934214_SetVisibilityForExistingDomains.cs" />
+    <Compile Include="Migrations\201610141934214_SetVisibilityForExistingDomains.Designer.cs">
+      <DependentUpon>201610141934214_SetVisibilityForExistingDomains.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610171555581_FixDomainAccessTables.cs" />
+    <Compile Include="Migrations\201610171555581_FixDomainAccessTables.Designer.cs">
+      <DependentUpon>201610171555581_FixDomainAccessTables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610171646356_ReAddVisibilityForDomains.cs" />
+    <Compile Include="Migrations\201610171646356_ReAddVisibilityForDomains.Designer.cs">
+      <DependentUpon>201610171646356_ReAddVisibilityForDomains.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610181502416_FixDomainAccessTables2.cs" />
+    <Compile Include="Migrations\201610181502416_FixDomainAccessTables2.Designer.cs">
+      <DependentUpon>201610181502416_FixDomainAccessTables2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611151753563_CreateSecurityEntities.cs" />
+    <Compile Include="Migrations\201611151753563_CreateSecurityEntities.Designer.cs">
+      <DependentUpon>201611151753563_CreateSecurityEntities.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611151825115_RegisterPermissions.cs" />
+    <Compile Include="Migrations\201611151825115_RegisterPermissions.Designer.cs">
+      <DependentUpon>201611151825115_RegisterPermissions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611221942237_FixDomainChildAssociation.cs" />
+    <Compile Include="Migrations\201611221942237_FixDomainChildAssociation.Designer.cs">
+      <DependentUpon>201611221942237_FixDomainChildAssociation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201612132142345_RegisterManageRequestTypeMappingsPermission.cs" />
+    <Compile Include="Migrations\201612132142345_RegisterManageRequestTypeMappingsPermission.Designer.cs">
+      <DependentUpon>201612132142345_RegisterManageRequestTypeMappingsPermission.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201612141604392_AddAPIDetailsToNetwork.cs" />
+    <Compile Include="Migrations\201612141604392_AddAPIDetailsToNetwork.Designer.cs">
+      <DependentUpon>201612141604392_AddAPIDetailsToNetwork.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201612151604440_AddNetworkRequestTypeMappingTables.cs" />
+    <Compile Include="Migrations\201612151604440_AddNetworkRequestTypeMappingTables.Designer.cs">
+      <DependentUpon>201612151604440_AddNetworkRequestTypeMappingTables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701102020533_AddSupportedAdapterToDataSource.cs" />
+    <Compile Include="Migrations\201701102020533_AddSupportedAdapterToDataSource.Designer.cs">
+      <DependentUpon>201701102020533_AddSupportedAdapterToDataSource.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701261940429_ModifyNetworkRequestTypeMapping.cs" />
+    <Compile Include="Migrations\201701261940429_ModifyNetworkRequestTypeMapping.Designer.cs">
+      <DependentUpon>201701261940429_ModifyNetworkRequestTypeMapping.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702131907366_NetworkRequestEntities.cs" />
+    <Compile Include="Migrations\201702131907366_NetworkRequestEntities.Designer.cs">
+      <DependentUpon>201702131907366_NetworkRequestEntities.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702211448512_NetworkRequestParticipantRelationship.cs" />
+    <Compile Include="Migrations\201702211448512_NetworkRequestParticipantRelationship.Designer.cs">
+      <DependentUpon>201702211448512_NetworkRequestParticipantRelationship.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706081507155_IncreaseUserNameFieldLength.cs" />
+    <Compile Include="Migrations\201706081507155_IncreaseUserNameFieldLength.Designer.cs">
+      <DependentUpon>201706081507155_IncreaseUserNameFieldLength.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706281316331_ChangeGroupDataType.cs" />
+    <Compile Include="Migrations\201706281316331_ChangeGroupDataType.Designer.cs">
+      <DependentUpon>201706281316331_ChangeGroupDataType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201707241247014_AddContactInfoToOrganizations.cs" />
+    <Compile Include="Migrations\201707241247014_AddContactInfoToOrganizations.Designer.cs">
+      <DependentUpon>201707241247014_AddContactInfoToOrganizations.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Networks\NetworkEntity.cs" />
+    <Compile Include="Networks\Network.cs" />
+    <Compile Include="Organizations\Organization.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Requests\NetworkRequest.cs" />
+    <Compile Include="Requests\NetworkRequestDocument.cs" />
+    <Compile Include="Requests\NetworkRequestParticipant.cs" />
+    <Compile Include="Requests\NetworkRequestResponse.cs" />
+    <Compile Include="Requests\NetworkRequestRoute.cs" />
+    <Compile Include="Requests\NetworkRequestTypeDefinition.cs" />
+    <Compile Include="Requests\NetworkRequestTypeMapping.cs" />
+    <Compile Include="Security\AclGlobal.cs" />
+    <Compile Include="Security\Permission.cs" />
+    <Compile Include="Security\SecurityGroup.cs" />
+    <Compile Include="Security\SecurityGroupUser.cs" />
+    <Compile Include="Users\User.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lpp.Cnds.DTO\Lpp.CNDS.DTO.csproj">
+      <Project>{6fa65840-f91b-4d0b-806f-4b928e8aa394}</Project>
+      <Name>Lpp.CNDS.DTO</Name>
+    </ProjectReference>
+    
+    
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Migrations\CustomScripts\Domain Definitions.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201608021607401_INIT.resx">
+      <DependentUpon>201608021607401_INIT.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608041618125_AddTriggers.resx">
+      <DependentUpon>201608041618125_AddTriggers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609131432144_AddActiveAndDeletedFlags.resx">
+      <DependentUpon>201609131432144_AddActiveAndDeletedFlags.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609231345161_AddDeletedFlagForDomainUse.resx">
+      <DependentUpon>201609231345161_AddDeletedFlagForDomainUse.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610111242264_AddDeletedToDomain.resx">
+      <DependentUpon>201610111242264_AddDeletedToDomain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610141747361_AddDomainAccessTables.resx">
+      <DependentUpon>201610141747361_AddDomainAccessTables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610141934214_SetVisibilityForExistingDomains.resx">
+      <DependentUpon>201610141934214_SetVisibilityForExistingDomains.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610171555581_FixDomainAccessTables.resx">
+      <DependentUpon>201610171555581_FixDomainAccessTables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610171646356_ReAddVisibilityForDomains.resx">
+      <DependentUpon>201610171646356_ReAddVisibilityForDomains.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610181502416_FixDomainAccessTables2.resx">
+      <DependentUpon>201610181502416_FixDomainAccessTables2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611151753563_CreateSecurityEntities.resx">
+      <DependentUpon>201611151753563_CreateSecurityEntities.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611151825115_RegisterPermissions.resx">
+      <DependentUpon>201611151825115_RegisterPermissions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611221942237_FixDomainChildAssociation.resx">
+      <DependentUpon>201611221942237_FixDomainChildAssociation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612132142345_RegisterManageRequestTypeMappingsPermission.resx">
+      <DependentUpon>201612132142345_RegisterManageRequestTypeMappingsPermission.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612141604392_AddAPIDetailsToNetwork.resx">
+      <DependentUpon>201612141604392_AddAPIDetailsToNetwork.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612151604440_AddNetworkRequestTypeMappingTables.resx">
+      <DependentUpon>201612151604440_AddNetworkRequestTypeMappingTables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701102020533_AddSupportedAdapterToDataSource.resx">
+      <DependentUpon>201701102020533_AddSupportedAdapterToDataSource.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701261940429_ModifyNetworkRequestTypeMapping.resx">
+      <DependentUpon>201701261940429_ModifyNetworkRequestTypeMapping.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702131907366_NetworkRequestEntities.resx">
+      <DependentUpon>201702131907366_NetworkRequestEntities.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702211448512_NetworkRequestParticipantRelationship.resx">
+      <DependentUpon>201702211448512_NetworkRequestParticipantRelationship.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706081507155_IncreaseUserNameFieldLength.resx">
+      <DependentUpon>201706081507155_IncreaseUserNameFieldLength.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706281316331_ChangeGroupDataType.resx">
+      <DependentUpon>201706281316331_ChangeGroupDataType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707241247014_AddContactInfoToOrganizations.resx">
+      <DependentUpon>201707241247014_AddContactInfoToOrganizations.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
+  </Target>
+  
+</Project>

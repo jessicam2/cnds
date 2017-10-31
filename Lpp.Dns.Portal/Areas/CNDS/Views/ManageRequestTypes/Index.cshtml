@@ -1,0 +1,58 @@
+﻿<script src="~/Areas/CNDS/js/ManageRequestTypes/Index.js"></script>
+@{
+    ViewBag.Title = "Manage Request Type Mappings";
+    Layout = "~/Views/_Layout.cshtml";
+}
+@section Head{
+    <style>
+        .grid-wrapper {
+            min-height:600px;
+        }
+        .grid-footer {
+            background-color:#f5f5f5;
+            padding:10px 15px;
+            border-bottom-left-radius:5px;
+            border-bottom-right-radius:5px;
+        }
+    </style>
+    }
+
+<article class="panel panel-default" data-bind="css: {visible: true}">
+    <div class="panel-heading">
+        <ol class="breadcrumb">
+            <li><a href="/">Home</a></li>
+            <li>CNDS</li>
+            <li class="active">Manage Request Type Mappings</li>
+        </ol>
+    </div>
+    <div class="panel-body">
+        <div id="tStrip">
+            <ul>
+                <li id="tDefinitions" class="k-state-active">RequestType Route Definitions</li>
+                <li id="tMappings">Request Type Mappings Definitions</li>
+            </ul>
+            <div>
+                <p class="alert alert-info">
+                    Create and edit Request Type Route Definitions. These define a 'route' that a request could follow to reach a particular DataMart. Having a route definition indicates that a DataMart is available to receive a request via the specified route, but does not indicate whether a request type is associated (mapped) with that route. A mapping between a request type and a route is managed in the Request Type Mapping Definitions tab.
+                    Defining the available routes is managed by the CNDS Administrators.
+                </p>
+                <div id="gDefinitions"></div>
+                <nav class="grid-footer">
+                    <button class="btn btn-default pull-right" style="width:120px;margin-left:12px;" data-bind="click:onNewRequestTypeDefinition">New Route</button>
+                    <button class="btn btn-default pull-right" style="width:120px;" data-bind="click:onEditRequestTypeDefinition, enable:HasSelectedRouteDefinitions">Edit Route</button>
+                    <button class="btn btn-default" style="width:120px;" data-bind="click:onDeleteDefinition, enable:HasSelectedRouteDefinitions">Delete Route</button>
+                </nav>
+            </div>
+            <div>
+                <p class="alert alert-info">Create and edit Request Type Mapping Definitions. The mappings define the links between request types and any available routes to DataMarts. In order to send cross-network requests, a request type must be mapped to follow routes which were previously defined in the Request Type Route Definitions tab. A mapping indicates that the request type can be submitted to the specified DataMart.
+Defining the mappings is managed by the CNDS Administrators.</p>
+                <div id="gMappings"></div>
+                <nav class="grid-footer">
+                    <button class="btn btn-default pull-right" style="width:120px;margin-left:12px;" data-bind="click:onNewMapping">New Mapping</button>
+                    <button class="btn btn-default pull-right" style="width:120px;" data-bind="click:onEditMapping, enable:HasSelectedMappingRows">Edit Mapping</button>
+                    <button class="btn btn-default" style="width:120px;" data-bind="click:onDeleteMapping, enable:HasSelectedMappingRows">Delete Mapping</button>
+                </nav>
+            </div>
+        </div>       
+    </div>
+</article>

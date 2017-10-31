@@ -1,0 +1,273 @@
+﻿
+@{
+    ViewBag.Title = "Manage Metadata";
+    Layout = "~/Views/_Layout.cshtml";
+}
+@section Scripts{    
+    <script src="~/Areas/CNDS/js/ManageMetadata/index.js"></script>
+}
+@section Head{
+    <style>
+        .tab-body{ min-height:500px; }
+        .domain-container{            
+            margin:1px 0px 3px 0px;
+        }
+            .domain-container .domain-container {
+                margin-left:12px;
+            }
+        .domain-header {
+            background-color:#688fc0;
+            color:#fff;
+            padding:3px;
+            border-top-left-radius:3px;
+            border-top-right-radius:3px;
+        }
+        .domain-body{
+            padding:8px; 
+            border:1px solid #e2e2e2;           
+        }
+            .domain-body input {
+                box-sizing:border-box !important;
+            }
+    </style>
+}
+
+<article class="panel panel-default" data-bind="css: {visible: true}">
+    
+    <div class="panel-heading">
+        <ol class="breadcrumb">
+            <li><a href="/">Home</a></li>
+            <li>CNDS</li>
+            <li class="active">Manage Metadata</li>
+        </ol>
+    </div>
+
+    <div class="panel-body">
+        <div id="metadata-tabs" data-bind="kendoTabStrip:{select: onTabSelect}" style="min-height:500px;">
+            <ul>
+                <li class="k-state-active"><i class="glyphicon glyphicon-star" data-bind="visible:DomainChanged"></i>Domains</li>
+                <li>User</li>
+                <li>Organization</li>
+                <li>Data Source</li>
+            </ul>
+            <div class="tab-body">
+                <p class="alert alert-info">This is for Defining the Domains.  If any changes are made, please Save your changes before continuing onto Users, Organizations, or Data Sources</p>
+                <div>
+                    <button type="button" id="btnNewRootDomain" data-bind="click:onNewDomain" class="btn btn-default" style="float:right;">New Domain</button>
+                </div>
+                <div style="clear:both;padding-top:12px;">
+                    <!--ko foreach:{data: RootDomains, as: 'rootDomain' } -->
+                    <div data-bind="template:{ name:'domain-template', data: rootDomain }" ></div>
+                    <!--/ko-->
+                </div>
+            </div>
+            <div class="tab-body">
+                <p class="alert alert-info">Select the metadata definitions that are applicable for the User entity type.</p>
+                <div id="orgTree">
+                    <ul>
+                        <!--ko foreach: UserDomainUseDataSource-->
+                        <li style="list-style:none;" data-bind="template:{ name:'CheckBox-tree', data: $data }"></li>
+                        <br />
+                        <!--/ko-->
+                    </ul>
+                </div>
+
+
+            </div>
+            <div class="tab-body">
+                <p class="alert alert-info">Select the metadata definitions that are applicable for the Organization entity type.</p>
+                <div id="orgTree">
+                    <ul>
+                        <!--ko foreach: OrganizationDomainUseDataSource-->
+                            <li style="list-style:none;" data-bind="template:{ name:'CheckBox-tree', data: $data }"></li>
+                            <br />
+                        <!--/ko-->
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-body">
+                <p class="alert alert-info">Select the metadata definitions that are applicable for the Data Source entity type.</p>
+                <div id="orgTree">
+                    <ul>
+                        <!--ko foreach: DataSourceDomainUseDataSource-->
+                        <li style="list-style:none;" data-bind="template:{ name:'CheckBox-tree', data: $data }"></li>
+                        <br />
+                        <!--/ko-->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+<nav class="panel-footer right">
+    <button class="btn btn-warning pull-right" id="btnCancel" data-bind="click: onCancel" style="margin-left: 10px;"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel</button>
+    <button class="btn btn-success pull-right" data-bind="click: onSave" id="btnSave"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save</button>
+    <br class="clear" />
+</nav>
+
+<script type="text/html" id="domain-template">
+    <div class="domain-container">
+        <div class="domain-header">
+            <div class="btn-group pull-right">
+                <span class="glyphicon glyphicon-option-horizontal dropdown-toggle" style="margin-right:8px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                <ul class="dropdown-menu">
+                    <li><a href="#" data-bind="click: function(data, event) { $root.onRemove($data, data, event)}">Remove</a></li>
+                </ul>
+            </div>
+            <span class="glyphicon" data-bind="css:ViewToggleCss, click:ToggleView"></span>
+            <span data-bind="text: Title" style="font-weight:bold;"></span> (<span data-bind="text: DataTypeDisplay"></span>)
+        </div>
+        <div class="domain-body" data-bind="template:{ name: ViewTemplate }, visible:ViewExpanded">
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="booleanGroup-template">
+    <div>
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Title<em>*</em></label>
+                <input type="text" class="form-control" data-bind="value:Title" required style="width:90%" />
+            </div>
+            <div class="col-sm-4 pull-right">
+                <label>Data Type</label>
+                <input type="text" readonly class="form-control" data-bind="value:DataTypeDisplay" />
+            </div>
+        </div>
+    </div>
+    <div style="margin-top:16px;border-bottom:1px solid #999;">
+        <div style="height:20px;"><button type="button" id="btnNewChildDomain" data-bind="click: function(data, event) { $root.onNewChildDomain($data, data, event)}" class="btn btn-default" style="float:right;">New Child Domain</button></div>
+        <p style="font-weight:bold;font-size:1.2em;margin-bottom:0px;">Child Domains</p>
+    </div>
+    <div class="clearfix"></div>
+    <div>
+        <!--ko foreach:{data: ChildDomains, as: 'childDomain' } -->
+        <div data-bind="template:{ name:'domain-template', data: childDomain }"></div>
+        <!--/ko-->
+    </div>
+
+</script>
+
+<script type="text/html" id="container-template">
+    <div>
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Title<em>*</em></label>
+                <input type="text" class="form-control" data-bind="value:Title" required style="width:90%" />
+            </div>
+            <div class="col-sm-4 pull-right">
+                <label>Data Type</label>
+                <input type="text" readonly class="form-control" data-bind="value:DataTypeDisplay" />
+            </div>
+        </div>
+    </div>
+    <div style="margin-top:16px;border-bottom:1px solid #999;">
+        <div style="height:20px;"><button type="button" id="btnNewChildDomain" data-bind="click: function(data, event) { $root.onNewChildDomain($data, data, event)}" class="btn btn-default" style="float:right;">New Child Domain</button></div>
+        <p style="font-weight:bold;font-size:1.2em;margin-bottom:0px;">Child Domains</p>
+    </div>
+    <div class="clearfix"></div>
+    <div>
+        <!--ko foreach:{data: ChildDomains, as: 'childDomain' } -->
+        <div data-bind="template:{ name:'domain-template', data: childDomain }"></div>
+        <!--/ko-->
+    </div>
+
+</script>
+
+<script type="text/html" id="string-template">
+    <div class="form">
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Title<em>*</em></label>
+                <input type="text" class="form-control" data-bind="value:Title" required style="width:90%"/>
+            </div>
+            <div class="col-sm-4 pull-right">
+                <label>Data Type</label>
+                <input type="text" readonly class="form-control" data-bind="value:DataTypeDisplay" />
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="boolean-template">
+    <div class="form">
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Title<em>*</em></label>
+                <input type="text" class="form-control" data-bind="value:Title" required style="width:90%" />
+            </div>
+            <div class="col-sm-4 pull-right">
+                <label>Data Type</label>
+                <input type="text" readonly class="form-control" data-bind="value:DataTypeDisplay" />
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="reference-template">
+    <div class="form">
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Title<em>*</em></label>
+                <input type="text" class="form-control" data-bind="value:Title" required style="width:90%" />
+            </div>
+            <div class="col-sm-4 pull-right">
+                <label>Data Type</label>
+                <input type="text" readonly class="form-control" data-bind="value:DataTypeDisplay" />
+            </div>
+        </div>
+    </div>
+    <div style="margin-top:16px;border-bottom:1px solid #999;">
+            <label style="font-weight:normal;float:right;">
+                <input type="checkbox" data-bind="checked: IsMultiValue" style="margin-top:2px;" /> Supports Multi-Value Selection
+            </label>
+        <p style="font-weight:bold;font-size:1.2em;margin-bottom:0px;">References</p>
+    </div>
+    
+    <div data-bind="kendoGrid: {
+        data: DomainReferencesDataSource,
+        pageable:false,
+        height:550,
+        toolbar:['create'],
+        columns:[
+            { field: 'Title', title: 'Title' },
+            { field: 'Description', title: 'Description' },
+            { command: [{name:'edit', text:'Edit'}, {name:'destroy', text:'Remove'}], title: '&nbsp;' }
+        ],
+        editable:'inline'
+        }"></div>
+    
+</script>
+
+<script type="text/html" id="int-template">
+    <div class="form">
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Title<em>*</em></label>
+                <input type="text" class="form-control" data-bind="value:Title" required style="width:90%" />
+            </div>
+            <div class="col-sm-4 pull-right">
+                <label>Data Type</label>
+                <input type="text" readonly class="form-control" data-bind="value:DataTypeDisplay" />
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="CheckBox-tree">
+    <div>
+        <i style="margin-left:-20px; margin-bottom:5px;" class="k-icon k-plus" data-bind="click:$root.OpenChildDetail.bind($data, DomainID, EntityType),attr: {ID: 'img-' + DomainID + EntityType}, visible: $data.SubDomainUses.length > 0"></i>
+        <label>
+            <input type="checkbox" data-bind="checked:$data.CheckedForUse">
+            <span style="font-weight:normal;" data-bind="text:$data.Title"></span>
+        </label>
+    </div>
+    <!--ko if: $data.SubDomainUses != undefined || $data.SubDomainUses != null-->
+        <ul data-bind="attr: {ID: 'children-' + DomainID + EntityType}, visible:false">
+        <!--ko foreach: $data.SubDomainUses-->
+            <br />
+            <li style="list-style:none;" data-bind="template:{ name:'CheckBox-tree', data: $data }"></li>
+        <!--/ko-->
+        </ul>
+    <!--/ko-->
+</script>

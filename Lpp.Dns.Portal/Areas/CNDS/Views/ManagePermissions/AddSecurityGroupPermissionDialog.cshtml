@@ -1,0 +1,37 @@
+﻿
+@{
+    ViewBag.Title = "Add Security Group";
+    Layout = "~/Views/_DialogLayout.cshtml";
+}
+<style>
+    .k-grid-content {
+        height: 269px;
+    }
+
+    html {
+        overflow-y: hidden;
+    }
+</style>
+<section id="SecurityGroupWindow" style="width:500px; margin-left:10px;">
+    <div class="tab-pane active" id="Organizations">
+        <div class="row" style="margin-top:20px;">
+            <div class="col-sm-9">
+                <div id="gOrgResults" data-bind="kendoGrid: {
+                                data: dsSecurityGroup,
+                                scrollable: true,
+                                resizable: true,
+                                filterable: true,
+                                sortable: true,
+                                selectable: 'row',
+                                columns: [
+                                    {field: 'Name', title: 'Security Group', width: 90, attributes: { style: 'cursor: pointer;'}},
+                                ],
+                                change: AddSecurityGroup
+                            }" style="height: 300px;">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="~/Areas/CNDS/js/ManagePermissions/AddCNDSSecurityGroup.js"></script>

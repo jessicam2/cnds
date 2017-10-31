@@ -1,0 +1,146 @@
+﻿
+@{
+    ViewBag.Title = "Search Organizations";
+    Layout = "~/Views/_Layout.cshtml";
+}
+<script src="~/Areas/CNDS/js/Search/Organizations.js"></script>
+<script src="@this.ResourceUrl("/scripts/kendo/2016.2.523/jszip.min.js")"></script>
+<style>
+    p {
+        margin: 0 0 0;
+    }
+</style>
+<article class="panel panel-default" data-bind="css: {visible: true}">
+
+    <div class="panel-heading">
+        <ol class="breadcrumb">
+            <li><a href="/">Home</a></li>
+            <li>CNDS</li>
+            <li class="active">Search Organizations</li>
+        </ol>
+    </div>
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <section class="col-md-4" style="max-height:700px; height:700px;">
+                    <div class="panel panel-default" style="min-height:275px; max-height:275px; overflow: scroll">
+                        <div class="panel-heading">Search Summary</div>
+                        <div class="panel-body">
+                            <div id="selectedDomainTree">
+                                <ul style="padding-left:20px;">
+                                    <!--ko foreach: Domains-->
+                                    <!--ko if: $data.CheckedValue()-->
+                                    <li data-bind="template:{ name:'selectedTree', data: $data }"></li>
+                                    <!--/ko-->
+                                    <!--/ko-->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default" style="min-height:400px; max-height:400px; overflow:scroll">
+                        <div class="panel-heading">
+                            Search Criteria
+                        </div>
+                        <div class="panel-body">
+                            <div id="domainTree">
+                                <ul style="padding-left:20px;">
+                                    <!--ko foreach: Domains-->
+                                    <li style="list-style:none;" data-bind="template:{ name:'CheckBox-tree', data: $data }"></li>
+                                    <!--/ko-->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="col-md-8" style="max-height:700px; height:700px;">
+                    <div class="panel panel-default" style="height:100%">
+                        <div class="panel-heading">
+                            <div style="float: left; height: 20px; margin-top: 5px;">Organizations Found</div>
+                            <br style="clear:both;" />
+                        </div>
+                        <div class="panel-body">
+                            <div id="gOrganizationsGrid" data-bind="kendoGrid: {
+                                                                toolbar: ['excel', 'pdf'],
+                                                                excel: {
+                                                                    fileName: 'Organization-Export.xlsx'
+                                                                },
+                                                                pdf: {
+                                                                    fileName: 'Organization-Export.pdf'
+                                                                },
+                                                                data: dsResults,
+                                                                excelExport: FormatExcelExport,
+                                                                scrollable: true,
+                                                                filterable: true,
+                                                                resizable: true,
+                                                                sortable: true,
+                                                                height: '600px',
+                                                                columns: [
+                                                                    {field: 'Network', title: 'Network'},
+                                                                    {field: 'Name', title: 'Organization'},
+                                                                    {field: 'ContactInformation', title: 'Contact Information', encoded: false}
+                                                                ]
+                                                            }"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</article>
+
+<script type="text/html" id="CheckBox-tree">
+    <div>
+        <i style="margin-left:-20px; margin-bottom:5px; vertical-align:top" class="k-icon k-plus" data-bind="click:$root.OpenChildDetail.bind($data, ID),attr: {ID: 'img-' + ID}, visible: $data.ChildMetadata().length > 0 || $data.References().length > 0"></i>
+        <label>
+            <input type="checkbox" data-bind="checked: CheckedValue" />
+            <span style="font-weight:normal;" data-bind="text:$data.Title"></span>
+        </label>
+    </div>
+    <!--ko if: $data.ChildMetadata != undefined && $data.ChildMetadata().length > 0-->
+    <ul style="padding-left:20px;" data-bind="attr: {ID: 'children-' + ID}, visible:false">
+        <!--ko foreach: $data.ChildMetadata-->
+        <li style="list-style:none;" data-bind="template:{ name:'CheckBox-tree', data: $data }"></li>
+        <!--/ko-->
+    </ul>
+    <!--/ko-->
+    <!--ko if: $data.References != undefined && $data.References().length > 0-->
+    <ul style="padding-left:20px;" data-bind="attr: {ID: 'children-' + ID}, visible:false">
+        <!--ko foreach: $data.References-->
+        <li style="list-style:none;" data-bind="template:{ name:'Ref-tree', data: $data }"></li>
+        <!--/ko-->
+    </ul>
+    <!--/ko-->
+</script>
+
+<script type="text/html" id="Ref-tree">
+    <div>
+        <label>
+            <input type="checkbox" data-bind="checked: CheckedValue" />
+            <span style="font-weight:normal;" data-bind="text:$data.Title"></span>
+        </label>
+    </div>
+</script>
+
+<script type="text/html" id="selectedTree">
+
+    <span style="font-weight:normal;" data-bind="text:$data.Title"></span>
+    <!--ko if: $data.ChildMetadata != undefined && $data.ChildMetadata().length > 0-->
+    <ul style="padding-left:20px;">
+        <!--ko foreach: $data.ChildMetadata-->
+        <!--ko if: $data.CheckedValue()-->
+        <li data-bind="template:{ name:'selectedTree', data: $data }"></li>
+        <!--/ko-->
+        <!--/ko-->
+    </ul>
+    <!--/ko-->
+    <!--ko if: $data.References != undefined && $data.References().length > 0-->
+    <ul style="padding-left:20px;">
+        <!--ko foreach: $data.References-->
+        <!--ko if: $data.CheckedValue()-->
+        <li data-bind="template:{ name:'selectedTree', data: $data }"></li>
+        <!--/ko-->
+        <!--/ko-->
+    </ul>
+    <!--/ko-->
+</script>

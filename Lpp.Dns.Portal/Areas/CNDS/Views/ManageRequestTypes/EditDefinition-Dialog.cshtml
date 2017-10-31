@@ -1,0 +1,54 @@
+﻿@{
+    Layout = "~/Views/_DialogLayout.cshtml";
+}
+@section Head{
+    <script src="~/areas/CNDS/js/ManageRequestTypes/editdefinition.js"></script>
+    <style>
+        #InnerForm {
+            /*padding-left:24px;*/
+        }
+
+            #InnerForm label {
+                display: block;
+            }
+
+        .dropdown {
+            width: 100%;
+        }
+    </style>
+}
+
+<article data-bind="css: {visible: true}">
+
+    <div id="InnerForm">
+            <div class="row form-group">
+                <div class="col-xs-12">
+                    <label>Network<em>*</em></label>
+                    <input id="ddlNetwork" class="form-control dropdown" data-bind="kendoDropDownList: {value: NetworkID, dataSource: dsNetwork, dataTextField: 'Name', dataValueField: 'ID',  optionLabel:{ Name:'Not Selected', ID:'' } }" required />
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-xs-12">
+                    <label>Project<em>*</em></label>
+                    <input id="ddlProject" class="form-control dropdown" data-bind="kendoDropDownList: {value: ProjectID, dataSource: dsProject, dataTextField: 'Name', dataValueField: 'ID',  optionLabel:{ Name:'Not Selected', ID:'' }, enable:false }" required />
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-xs-12">
+                    <label>RequestType<em>*</em></label>
+                    <input id="ddlRequestType" class="form-control dropdown" data-bind="kendoDropDownList: {value: RequestTypeID, dataSource: dsRequestTypes, dataTextField: 'Name', dataValueField: 'ID',  optionLabel:{ Name:'Not Selected', ID:'' }, enable:false }" required />
+                </div>
+            </div>
+            <div class="row form-group alt-row">
+                <div class="col-xs-12">
+                    <label>DataMart<em>*</em></label>
+                    <input id="ddlDataSource" class="form-control dropdown" data-bind="kendoDropDownList: {value: DataSourceID, dataSource: dsDataSources, dataTextField: 'Name', dataValueField: 'ID',  optionLabel:{ Name:'Not Selected', ID:'' }, enable:false }" required />
+                </div>
+            </div>
+    </div>
+
+    <nav class="footer">
+        <button class="btn btn-warning pull-right" style="margin-left:10px;width:120px" data-bind="click:onCancel"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel</button>
+        <button class="btn btn-warning pull-right" style="width:120px;" data-bind="click:onSubmit, enable:CanSave"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Ok</button>
+    </nav>
+</article>

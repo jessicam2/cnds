@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewBag.Title = "Add Security Group";
+    Layout = "~/Views/_DialogLayout.cshtml";
+}
+<script src="~/Areas/CNDS/js/ManagePermissions/AddSecurityGroupDialog.js"></script>
+<article data-bind="css: {visible: true}">
+    <div class="form">
+        <div class="row">
+            <div class="col-sm-9">
+                <label>Name<em>*</em></label>
+                <input type="text" class="form-control" required data-bind="value:Name" />
+            </div>
+        </div>
+    </div>
+    <nav class="footer">
+        <button class="btn btn-warning pull-right" style="margin-left:10px;" data-bind="click:onCancel"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel</button>
+        <button class="btn btn-warning pull-right" data-bind="click:onSubmit"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Ok</button>
+    </nav>
+</article>
+

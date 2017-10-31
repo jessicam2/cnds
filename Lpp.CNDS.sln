@@ -1,0 +1,67 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lpp.CNDS.DTO", "Lpp.Cnds.DTO\Lpp.CNDS.DTO.csproj", "{6FA65840-F91B-4D0B-806F-4B928E8AA394}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lpp.CNDS.Data", "Lpp.Cnds.Data\Lpp.CNDS.Data.csproj", "{FE381DAC-8869-4DB5-BBFF-D531D8535530}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lpp.CNDS.Api", "Lpp.Cnds.Api\Lpp.CNDS.Api.csproj", "{BCE4A936-18E7-4900-BD92-36F0A4625330}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{297020B9-30A6-44C7-A54D-E15CFC11C89E}"
+	ProjectSection(SolutionItems) = preProject
+		Build\CNDSCommonAssemblyInfo.cs = Build\CNDSCommonAssemblyInfo.cs
+		Build\CommonAssemblyInfo.cs = Build\CommonAssemblyInfo.cs
+		Build\DataMartClientCommonAssemlbyInfo.cs = Build\DataMartClientCommonAssemlbyInfo.cs
+		Build\Lpp.Dns.Base.targets = Build\Lpp.Dns.Base.targets
+		Build\Lpp.Dns.targets = Build\Lpp.Dns.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lpp.CNDS.Tests", "Lpp.CNDS.Tests\Lpp.CNDS.Tests.csproj", "{EC2C7684-C73E-4F00-BA51-F6B9B26959C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lpp.CNDS.ImportFromPMN", "Lpp.Applications\Lpp.CNDS.ImportFromPMN\Lpp.CNDS.ImportFromPMN.csproj", "{DE574120-616D-43AF-97AD-C1CEB5AFD008}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lpp.Dns.DTO", "Lpp.Dns.DTO\Lpp.Dns.DTO.csproj", "{DD487AA9-8099-4AA7-8CB2-BAE3A2B5104D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lpp.Dns.ApiClient", "Lpp.Dns.ApiClient\Lpp.Dns.ApiClient.csproj", "{335B59E5-6C48-4BA8-A427-97B4812E6C42}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6FA65840-F91B-4D0B-806F-4B928E8AA394}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FA65840-F91B-4D0B-806F-4B928E8AA394}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FA65840-F91B-4D0B-806F-4B928E8AA394}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FA65840-F91B-4D0B-806F-4B928E8AA394}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE381DAC-8869-4DB5-BBFF-D531D8535530}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE381DAC-8869-4DB5-BBFF-D531D8535530}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE381DAC-8869-4DB5-BBFF-D531D8535530}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE381DAC-8869-4DB5-BBFF-D531D8535530}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCE4A936-18E7-4900-BD92-36F0A4625330}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCE4A936-18E7-4900-BD92-36F0A4625330}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCE4A936-18E7-4900-BD92-36F0A4625330}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCE4A936-18E7-4900-BD92-36F0A4625330}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC2C7684-C73E-4F00-BA51-F6B9B26959C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC2C7684-C73E-4F00-BA51-F6B9B26959C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC2C7684-C73E-4F00-BA51-F6B9B26959C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC2C7684-C73E-4F00-BA51-F6B9B26959C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE574120-616D-43AF-97AD-C1CEB5AFD008}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE574120-616D-43AF-97AD-C1CEB5AFD008}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE574120-616D-43AF-97AD-C1CEB5AFD008}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE574120-616D-43AF-97AD-C1CEB5AFD008}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD487AA9-8099-4AA7-8CB2-BAE3A2B5104D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD487AA9-8099-4AA7-8CB2-BAE3A2B5104D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD487AA9-8099-4AA7-8CB2-BAE3A2B5104D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD487AA9-8099-4AA7-8CB2-BAE3A2B5104D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{335B59E5-6C48-4BA8-A427-97B4812E6C42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{335B59E5-6C48-4BA8-A427-97B4812E6C42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{335B59E5-6C48-4BA8-A427-97B4812E6C42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{335B59E5-6C48-4BA8-A427-97B4812E6C42}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

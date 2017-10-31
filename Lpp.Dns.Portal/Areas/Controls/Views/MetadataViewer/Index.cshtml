@@ -1,0 +1,160 @@
+﻿<script src="~/Areas/Controls/js/MetadataViewer/Index.js"></script>
+
+<style>
+    .panel{
+        margin:10px;
+    }
+    .groupedMetaData .metaDataText{
+        margin-top:-15px;
+    }
+    #MetadataViewer .form-group{
+        margin-bottom:0px;
+    }
+</style>
+
+<section id="MetadataViewer">
+    <div style="margin-top:3px;" class="panel panel-default">
+        <div class="panel-body">
+            <div class="form-group">
+                <!--ko foreach: NonGroupedMetadata-->
+                <div class="nonGroupedMetaData" data-bind="template:{name:$data.DataType, data: $data}"></div>
+                <!--/ko-->
+            </div>
+        </div>
+    </div>
+    
+    <!--ko foreach: GroupedMetadata-->
+        <div class="groupedMetaData" data-bind="template:{name:$data.DataType, data: $data}"></div>
+	<!--/ko-->	
+</section>
+
+<script type="text/html" id="string">
+    <div class="row metaDataText">
+        <div style="margin-right:15px;" class="col-sm-5">
+            <label data-bind="text: $data.Title, attr:{id: 'lbl' + $data.HTMLID, for: 'txt' + $data.HTMLID, title: $data.Description}"></label>
+            <input class="form-control" type="text" data-bind="value: $data.Value, attr:{id: 'txt' + $data.HTMLID}" />
+            <br />
+        </div>
+    </div>
+</script>
+<script type="text/html" id="boolean">
+    <div style="margin-right:15px;" class="col-sm-5">
+        <label data-bind="attr:{id: 'lbl' + $data.HTMLID}">
+            <input style="display:inline; vertical-align:top;" type="checkbox" data-bind="checked: $data.Value, attr:{id: 'chk' + $data.HTMLID}" />
+            <label  style="display:inline; vertical-align:middle;" data-bind="text: $data.Title, attr:{id: 'lbl' + $data.HTMLID}"></label>
+        </label>
+        <br />
+    </div>
+</script>
+<script type="text/html" id="int">
+    <div class="row">
+        <div style="margin-right:15px;" class="col-sm-5">
+            <label data-bind="text: $data.Title, attr:{id: 'lbl' + $data.HTMLID, for: 'txt' + $data.HTMLID, title: $data.Description}"></label>
+            <input class="form-control" type="number" data-bind="value: $data.Value, attr:{id: 'txt' + $data.HTMLID}" />
+        </div>
+    </div>
+</script>
+<script type="text/html" id="reference">
+    <!--ko if: $data.IsMultiValue-->
+        <div class="row">
+            <style>
+                .refernceList > li:nth-child(odd) {
+                    margin-left: -35px;
+                }
+
+                .refernceList > li:nth-child(even) {
+                    margin-left: 75px;
+                }
+            </style>
+            <label style="display:block; margin-left:20px;" data-bind="text: $data.Title, attr:{id: 'lbl' + $data.HTMLID}"></label>
+            <ul class="refernceList" data-bind="foreach: $data.References">
+                <li style="list-style:none;" class="col-sm-5">
+                    <label data-bind="attr:{id: 'lbl' + $data.HTMLID}">
+                        <input style="display:inline; vertical-align:top;" type="checkbox" data-bind="checked: $data.CheckValue, attr:{id: 'chk' + $data.HTMLID}" />
+                        <label style="display:inline; vertical-align:middle;" data-bind="text: $data.Title, attr:{id: 'lbl' + $data.HTMLID, title: $data.Description}"></label>
+                    </label>
+                    <input type="text" class="form-control" data-bind="value: $data.OtherValue, visible: $data.ShowOtherBox, attr:{id: 'text' + $data.HTMLID}" />
+                </li>
+            </ul>
+        </div>
+        <br />
+    <!--/ko-->
+    <!--ko ifnot: $data.IsMultiValue-->
+    <div class="row">
+        <div class="col-sm-5">
+            <label style="display:block" data-bind="text: $data.Title, attr:{id: 'lbl' + $data.HTMLID, for: 'cbx' + $data.HTMLID, title: $data.Description}"></label>
+            <select data-bind="kendoDropDownList:{data: $data.References, dataTextField: 'Title', dataValueField: 'ID', value: $data.Value, attr:{id: 'cbx' + $data.HTMLID}}"></select>
+        </div>
+    </div>
+    <br />
+        <!--/ko-->
+</script>
+
+<script type="text/html" id="booleanGroup">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            @* <h3 class="panel-title" data-bind="text: $data.Title"></h3>*@
+            <div class="checkbox" style="display:inline">
+                <label>
+                    <input type="checkbox" data-bind="checked:CheckValue" style="float:inherit;" /><h3 class="panel-title" data-bind="text: $data.Title"></h3>
+                </label>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <!--ko if: $data.ChildMetadata.length > 0-->
+                    <!--ko foreach: $data.ChildMetadata-->
+                        <!--ko if: $data.DataType !='boolean'-->
+                            <br style="clear:both" />
+                            <div data-bind="template:{name:'childBody', data:$data}"></div>
+                        <!--/ko-->
+                        <!--ko if: $data.DataType =='boolean'-->
+                            <div data-bind="template:{name:'childBody', data:$data}"></div>
+                        <!--/ko-->
+                    <!--/ko-->
+                <!--/ko-->
+                <!--ko if: $data.ChildMetadata.length === 0 && $data.DataType != 'container' && $data.DataType != 'booleanGroup'-->
+                <div data-bind="template:{name:$data.DataType, data:$data}"></div>
+                <!--/ko-->
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+             <h3 class="panel-title" data-bind="text: $data.Title"></h3>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <!--ko if: $data.ChildMetadata.length > 0-->
+                    <!--ko foreach: $data.ChildMetadata-->
+                        <!--ko if: $data.DataType !='boolean'-->
+                            <br style="clear:both" />
+                            <div data-bind="template:{name:'childBody', data:$data}"></div>
+                        <!--/ko-->
+                        <!--ko if: $data.DataType =='boolean'-->
+                            <div data-bind="template:{name:'childBody', data:$data}"></div>
+                        <!--/ko-->
+                    <!--/ko-->
+                <!--/ko-->
+                <!--ko if: $data.ChildMetadata.length === 0 && $data.DataType != 'container' && $data.DataType != 'booleanGroup'-->
+                <div data-bind="template:{name:$data.DataType, data:$data}"></div>
+                <!--/ko-->
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="childBody">
+    <!--ko if: $data.ChildMetadata.length === 0 && $data.DataType != 'container' && $data.DataType != 'booleanGroup' -->
+        <div data-bind="template:{name:$data.DataType, data:$data}"></div>
+    <!--/ko-->
+    <!--ko if: $data.DataType == 'container'-->
+        <div data-bind="template:{name:'container', data:$data}"></div>
+    <!--/ko-->
+    <!--ko if: $data.DataType == 'booleanGroup'-->
+    <div data-bind="template:{name:'booleanGroup', data:$data}"></div>
+    <!--/ko-->
+</script>

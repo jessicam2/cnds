@@ -1,0 +1,45 @@
+﻿@{
+    ViewBag.Title = "Search Data Sources";
+    Layout = "~/Views/_Layout.cshtml";
+}
+
+@section Scripts{
+<script src="@(System.Web.Configuration.WebConfigurationManager.AppSettings["ServiceUrl"])scripts/lpp.cnds.interfaces.js"></script>
+<script src="~/areas/cnds/js/search/common.js"></script>
+<script src="~/areas/cnds/js/search/NewRequest-grid.js"></script>  
+}
+
+@section Head{
+
+
+    <style>
+        input.checkbox,
+        input.header-checkbox {
+            margin:0px;
+        }
+    </style>
+
+}
+
+<article class="panel panel-default" data-bind="css: {visible: true}">
+
+    <div class="panel-heading">
+        <ol class="breadcrumb">
+            <li><a href="/">Home</a></li>
+            <li>CNDS</li>
+            <li class="active">Search Data Sources</li>
+        </ol>
+    </div>
+
+    <div class="panel-body" >
+        <p class="alert alert-info">Select the Data Sources to include in the request.</p>
+        <div id="gDataSources"></div>
+    </div>
+
+    <nav class="panel-footer right">
+        <button class="btn btn-default pull-right" data-bind="click:onSelectRequestType, enable:NumberOfSelectedDataSources() > 0 && DisableNewRequestButton() == false">Select Request Type</button>
+        <div class="clearfix"></div>
+    </nav>
+</article>
+
+

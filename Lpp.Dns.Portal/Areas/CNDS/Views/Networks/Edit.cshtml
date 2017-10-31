@@ -1,0 +1,55 @@
+﻿@{
+    ViewBag.Title = "Edit Security Group";
+    Layout = "~/Views/_DialogLayout.cshtml";
+}
+<script src="~/Areas/CNDS/js/networks/edit.js"></script>
+<article data-bind="css: {visible: true}">
+    <div class="form">
+        <div class="row">
+            <div class="col-sm-9">
+                <label>Network ID<em>*</em></label>
+                <input type="text" class="form-control" required data-bind="value:Network.ID" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-9">
+                <label>Name<em>*</em></label>
+                <input type="text" class="form-control" required data-bind="value:Network.Name" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-9">
+                <label>Url<em>*</em></label>
+                <input type="text" class="form-control" required data-bind="value:Network.Url" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-9">
+                <label>Service Url<em>*</em></label>
+                <input type="text" class="form-control" required data-bind="value:Network.ServiceUrl" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-9">
+                <label>Service UserName<em>*</em></label>
+                <input type="text" class="form-control" required data-bind="value:Network.ServiceUserName" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-9">
+                <p class="alert alert-warning">The password for the service user must be specified, it is not filled in from the service on purpose.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-9">
+                <label>Service Password<em>*</em></label>
+                <input type="password" class="form-control" required data-bind="value:Network.ServicePassword" />
+            </div>
+        </div>
+       
+    </div>
+    <nav class="footer">
+        <button class="btn btn-warning pull-right" style="margin-left:10px;" data-bind="click:onCancel"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel</button>
+        <button class="btn btn-warning pull-right" data-bind="click:onSubmit"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Ok</button>
+    </nav>
+</article>

@@ -1,0 +1,112 @@
+LIB CONNECT TO [Organizations with DomainData];
+
+[OrganizationDataDump]:
+LOAD 
+	[NetworkID],
+	[Network] AS [od.Network],
+	[NetworkUrl] AS [od.NetworkUrl],
+	[OrganizationID],
+	[Organization] AS [od.Organization],
+	[OrganizationAcronym] AS [od.OrganizationAcronym],
+	[ParentOrganizationID],
+	[DomainUseID],
+	[DomainID],
+	[ParentDomainID],
+	[DomainTitle] AS [od.DomainTitle],
+	[DomainIsMultiValueSelect] AS [od.DomainIsMultiValueSelect],
+	[DomainDataType] AS [od.DomainDataType],
+	[DomainReferenceID] AS [od.DomainReferenceID],
+	[DomainReferenceTitle] AS [od.DomainReferenceTitle],
+	[DomainReferenceDescription] AS [od.DomainReferenceDescription],
+	[DomainReferenceValue] AS [od.DomainReferenceValue],
+	[DomainDataValue] AS [od.DomainDataValue],
+	[DomainDataDomainReferenceID] AS [od.DomainDataDomainReferenceID],
+	[DomainAccessValue] AS [od.DomainAccessValue];
+SQL SELECT 
+	"NetworkID",
+	"Network",
+	"NetworkUrl",
+	"OrganizationID",
+	"Organization",
+	"OrganizationAcronym",
+	"ParentOrganizationID",
+	"DomainUseID",
+	"DomainID",
+	"ParentDomainID",
+	"DomainTitle",
+	"DomainIsMultiValueSelect",
+	"DomainDataType",
+	"DomainReferenceID",
+	"DomainReferenceTitle",
+	"DomainReferenceDescription",
+	"DomainReferenceValue",
+	"DomainDataValue",
+	"DomainDataDomainReferenceID",
+	"DomainAccessValue"
+FROM JSON (wrap off) "results";
+
+[Networks]:
+LOAD 
+	[NetworkID],
+	FirstValue([od.Network]) AS [network.Name],
+	FirstValue([od.NetworkUrl]) AS [network.NetworkUrl]
+Resident [OrganizationDataDump]
+Group By [NetworkID];
+
+
+[Organizations]:
+Load
+	[NetworkID],
+    [OrganizationID],
+    [ParentOrganizationID],
+    FirstValue([od.Organization]) AS [organization.Name],
+    FirstValue([od.OrganizationAcronym]) AS [organization.Acronym]
+Resident [OrganizationDataDump]
+Group By [NetworkID], [OrganizationID], [ParentOrganizationID];
+
+[OrganizationDomains]:
+Load
+	[DomainUseID],
+	[DomainID],
+	[ParentDomainID],
+	FirstValue([od.DomainTitle]) AS [domain.Title],
+	FirstValue([od.DomainIsMultiValueSelect]) AS [IsMultiValueSelect],
+	FirstValue([od.DomainDataType]) as [DataType]
+Resident [OrganizationDataDump]
+Group By [DomainUseID],[DomainID],[ParentDomainID];
+
+[OrganizationDomainReferences]:
+Load
+	[DomainUseID],
+    [DomainID],
+    [od.DomainReferenceID],    
+    FirstValue([od.DomainReferenceTitle]) as [domainReference.Title]
+Resident [OrganizationDataDump]
+Group By [DomainUseID], [DomainID], [od.DomainReferenceID];
+
+[OrganizationDomainValues]:
+Load
+	OrganizationID,
+    [DomainUseID],
+    [od.DomainReferenceTitle],
+    [od.DomainDataValue]
+Resident [OrganizationDataDump]
+Where (IsNull([od.DomainDataValue]) = 0 OR IsNull([od.DomainDataDomainReferenceID]) = 0);
+
+Drop Table [OrganizationDataDump];
+
+// [DomainDataTypes]:
+// Load
+// 	Distinct DataType
+// Resident [OrganizationDomains];	
+    
+
+
+// [OrganizationDomainValues]:
+// Generic Load
+// 	OrganizationID,
+//     [DomainUseID],
+//     [od.DomainReferenceTitle],
+//     [od.DomainDataValue]
+// Resident [OrganizationDataDump]
+// Where (IsNull([od.DomainDataValue]) = 0 OR IsNull([od.DomainDataDomainReferenceID]) = 0);

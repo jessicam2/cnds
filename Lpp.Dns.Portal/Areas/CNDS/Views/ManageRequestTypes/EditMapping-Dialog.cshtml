@@ -1,0 +1,82 @@
+﻿@{
+    Layout = "~/Views/_DialogLayout.cshtml";
+}
+@section Head{
+    <script src="~/areas/CNDS/js/ManageRequestTypes/editmapping.js"></script>
+    <style>
+        #InnerForm {
+            /*padding-left:24px;*/
+        }
+        #InnerForm label {
+            display:block;
+        }
+        .dropdown {
+            width:100%;
+        }
+        .description {
+            padding:4px 8px;
+            border-radius: 3px;
+        }
+    </style>
+}
+
+<article data-bind="css: {visible: true}">
+    
+        <div id="InnerForm">
+            <fieldset>
+                <legend>Source Network RequestType</legend>
+                <div class="row form-group">
+                    <div class="col-xs-6">
+                        <label>Network<em>*</em></label>
+                        <input id="ddlSourceNetwork" class="form-control dropdown" data-bind="kendoDropDownList: {value: SourceNetworkID, dataSource: dsSourceNetwork, dataTextField: 'Name', dataValueField: 'ID',  optionLabel:{ Name:'Not Selected', ID:'' } }" required />
+                    </div>
+                    <div class="col-xs-6">
+                        <label>Project<em>*</em></label>
+                        <input id="ddlSourceProject" class="form-control dropdown" data-bind="kendoDropDownList: {value: SourceProjectID, dataSource: dsSourceProject, dataTextField: 'Name', dataValueField: 'ID',  optionLabel:{ Name:'Not Selected', ID:'' }, enable:false }" required />
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-xs-12">
+                        <label>RequestType<em>*</em></label>
+                        <input id="ddlSourceRequestType" class="form-control dropdown" data-bind="kendoDropDownList: {value: SourceRequestTypeID, dataSource: dsSourceRequestTypes, dataTextField: 'Name', dataValueField: 'ID',  optionLabel:{ Name:'Not Selected', ID:'' }, enable:false }" required />
+                    </div>
+                </div>
+            </fieldset>
+            <div>
+                <h4 style="border-bottom:solid 1px #e5e5e5">Request Type Route Definitions</h4>
+                <p class="bg-info description">Select the routes the source request type could submit requests to. Only routes that belong to a Project different that the source Project are available for selection.</p>
+                <table class="table-condensed table-striped table-bordered" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Network</th>
+                            <th>Project</th>
+                            <th>RequestType</th>
+                            <th>DataMart</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="visible:AvailableRoutes().length > 0, foreach:{data: AvailableRoutes, as:'item'}">
+                        <tr>
+                            <td><input type="checkbox" data-bind="checkedValue:item.ID, checked:$root.SelectedRoutes" /></td>
+                            <td data-bind="text:item.Network"></td>
+                            <td data-bind="text:item.Project"></td>
+                            <td data-bind="text:item.RequestType"></td>
+                            <td data-bind="text:item.DataSource"></td>
+                        </tr>
+                    </tbody>
+                    <tbody data-bind="visible:AvailableRoutes().length == 0">
+                        <tr>
+                            <td colspan="5" style="text-align:center">
+                                <span style="border:1px solid #e1e1e1;padding:4px 12px">No Routes Available</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    
+            <nav class="footer">
+                <button class="btn btn-warning pull-right" style="margin-left:10px;width:120px" data-bind="click:onCancel"><i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cancel</button>
+                <button class="btn btn-warning pull-right" style="width:120px;" data-bind="click:onSubmit, enable:CanSave"><i class="glyphicon glyphicon-ok" aria-hidden="true"></i> Ok</button>
+            </nav>
+</article>

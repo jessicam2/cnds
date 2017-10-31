@@ -1,0 +1,146 @@
+SET ThousandSep=',';
+SET DecimalSep='.';
+SET MoneyThousandSep=',';
+SET MoneyDecimalSep='.';
+SET MoneyFormat='$#,##0.00;($#,##0.00)';
+SET TimeFormat='h:mm:ss TT';
+SET DateFormat='M/D/YYYY';
+SET TimestampFormat='M/D/YYYY h:mm:ss[.fff] TT';
+SET FirstWeekDay=6;
+SET BrokenWeeks=1;
+SET ReferenceDay=0;
+SET FirstMonthOfYear=1;
+SET CollationLocale='en-US';
+SET CreateSearchIndexOnReload=1;
+SET MonthNames='Jan;Feb;Mar;Apr;May;Jun;Jul;Aug;Sep;Oct;Nov;Dec';
+SET LongMonthNames='January;February;March;April;May;June;July;August;September;October;November;December';
+SET DayNames='Mon;Tue;Wed;Thu;Fri;Sat;Sun';
+SET LongDayNames='Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday';
+LIB CONNECT TO 'DataSources with DomainData (harriette_dean)';
+
+DataDump:
+Load
+	[NetworkID] as [d.NetworkID],
+    [Network] as [d.Network],
+    [NetworkUrl] as [d.NetworkUrl],
+    [DataSourceID] as [d.DataSourceID],
+    [DataSource] as [d.DataSource],
+    [DataSourceAcronym] as [d.DataSourceAcronym],
+    [DataSourceAdapterSupportedID] as [d.DataSourceAdapterSupportedID],
+    [DataSourceAdapterSupported] as [d.DataSourceAdapterSupported],
+    [SupportsCrossNetworkRequests] as [d.SupportsCrossNetworkRequests],
+    [OrganizationID] as [d.OrganizationID],
+    [Organization] as [d.Organization],
+    [OrganizationAcronym] as [d.OrganizationAcronym],
+    [ParentOrganizationID] as [d.ParentOrganizationID],
+    AutoNumberHash128([NetworkID],[OrganizationID], [ParentOrganizationID]) as OrganizationKey,
+    [DomainUseID] as [d.DomainUseID],
+    [DomainID] as [d.DomainID],
+    AutoNumberHash128([DomainUseID], [DomainID]) as DomainKey,
+    [ParentDomainID] as [d.ParentDomainID],
+    [DomainTitle] as [d.DomainTitle],
+    [DomainIsMultiValueSelect] as [d.DomainIsMultiValueSelect],
+    [DomainDataType] as [d.DomainDataType],
+    [DomainReferenceID] as [d.DomainReferenceID],
+    AutoNumberHash128([DomainUseID],[DomainID], [DomainReferenceID]) as DomainReferenceKey,
+    [DomainReferenceTitle] as [d.DomainReferenceTitle],
+    [DomainReferenceDescription] as [d.DomainReferenceDescription],
+    [DomainReferenceValue] as [d.DomainReferenceValue],
+    [DomainDataValue] as [d.DomainDataValue],
+    [DomainDataDomainReferenceID] as [d.DomainDataDomainReferenceID],
+    [DomainAccessValue] as [d.DomainAccessValue];
+SQL SELECT 
+	"NetworkID",
+	"Network",
+	"NetworkUrl",
+	"DataSourceID",
+	"DataSource",
+	"DataSourceAcronym",
+    "DataSourceAdapterSupportedID",
+    "DataSourceAdapterSupported",
+    "SupportsCrossNetworkRequests",
+	"OrganizationID",
+	"Organization",
+	"OrganizationAcronym",
+	"ParentOrganizationID",
+	"DomainUseID",
+	"DomainID",
+	"ParentDomainID",
+	"DomainTitle",
+	"DomainIsMultiValueSelect",
+	"DomainDataType",
+	"DomainReferenceID",
+	"DomainReferenceTitle",
+	"DomainReferenceDescription",
+	"DomainReferenceValue",
+	"DomainDataValue",
+	"DomainDataDomainReferenceID",
+	"DomainAccessValue"
+FROM JSON (wrap off) "results";
+
+[Networks]:
+LOAD 
+	[d.NetworkID] as NetworkID,
+	FirstValue([d.Network]) AS [network.Name],
+	FirstValue([d.NetworkUrl]) AS [network.NetworkUrl]
+Resident [DataDump]
+Group By [d.NetworkID];
+
+[Organizations]:
+Load
+	[d.NetworkID] as [NetworkID],
+    [d.OrganizationID] as OrganizationID,
+    FirstValue([d.ParentOrganizationID]) as [org.ParentOrganizationID],
+    FirstValue(OrganizationKey) as OrganizationKey,
+    FirstValue([d.Organization]) as [org.Name],
+    FirstValue([d.OrganizationAcronym]) as [org.Acronym]
+Resident [DataDump]
+Group By [d.NetworkID], OrganizationKey, [d.OrganizationID];
+
+[DataSources]:
+Load
+	[d.DataSourceID] as [DataSourceID],
+    OrganizationKey,
+    [d.NetworkID] as [datasource.NetworkID],
+    FirstValue([d.DataSource]) as [datasource.Name],
+    FirstValue ([d.DataSourceAcronym]) as [datasource.Acronym],
+    FirstValue([d.Network]) as [datasource.Network],
+    FirstValue([d.Organization]) as [datasource.Organization],
+    FirstValue([d.DataSourceAdapterSupportedID]) as [datasource.DataSourceAdapterSupportedID],
+    FirstValue([d.DataSourceAdapterSupported]) as [datasource.DataSourceAdapterSupported],
+    FirstValue([d.SupportsCrossNetworkRequests])  as [datasource.SupportsCrossNetworkRequests]
+Resident [DataDump]
+Group By OrganizationKey, [d.DataSourceID], [d.NetworkID];
+
+[Domains]:
+Load	
+    DomainKey,
+    FirstValue([d.DomainID]) as [domain.DomainID],
+    FirstValue([d.DomainUseID]) as [domain.DomainUseID],
+    FirstValue([d.ParentDomainID]) as [domain.ParentDomainID],
+    FirstValue([d.DomainTitle]) AS [domain.Title],
+	FirstValue([d.DomainIsMultiValueSelect]) AS [IsMultiValueSelect],
+	FirstValue([d.DomainDataType]) as [DataType]
+Resident [DataDump]
+Group By DomainKey;
+
+[DomainReferences]:
+Load
+	DomainKey,
+	DomainReferenceKey,   
+    FirstValue([d.DomainReferenceTitle]) as [domainReference.Title]
+Resident [DataDump]
+Group By DomainKey, DomainReferenceKey;
+
+[DomainValues]:
+Load
+	[d.DataSourceID] as [DataSourceID],
+    [d.DomainID] as [domain.DomainID],
+    DomainReferenceKey,
+    [d.DomainReferenceTitle],
+    [d.DomainDataValue]
+Resident [DataDump]
+Where (IsNull([d.DomainDataValue]) = 0 OR IsNull([d.DomainDataDomainReferenceID]) = 0);
+
+
+DROP TABLE DataDump;

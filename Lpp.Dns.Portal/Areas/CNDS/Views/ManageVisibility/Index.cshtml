@@ -1,0 +1,73 @@
+﻿<script src="~/Areas/CNDS/js/ManageVisibility/Index.js"></script>
+@{
+    Layout = null;
+}
+
+<style>
+    tr#Level2.child > td > span{
+        margin-left:20px;
+    }
+    tr#Level3.child > td > span{
+        margin-left:40px;
+    }
+    tr#Level4.child > td > span{
+        margin-left:60px;
+    }
+</style>
+
+<table class="table table-striped table-hover table-condensed table-bordered" style="width: 100%;">
+    <thead>
+        <tr style="background-color: #688fc0; color: white;">
+            <th class="bold center">Domain</th>
+            <th class="bold center">No One</th>
+            <th class="bold center">My Network Members</th>
+            <th class="bold center">All PMN Members</th>
+            <th class="bold center">All PMN and CNDS Members</th>
+            <th class="bold center">Anyone</th>
+        </tr>
+    </thead>
+    <tbody data-bind="template:{ name:'row', foreach: Metadata}">
+    </tbody>
+    <tfoot>
+        <tr style="background-color: #e1ebfa;">
+            <td>&nbsp;</td>
+            <td class="center"><a href="#" data-bind="click: NoOneSelectAll">Select All</a></td>
+            <td class="center"><a href="#" data-bind="click: MyNetworkSelectAll">Select All</a></td>
+            <td class="center"><a href="#" data-bind="click: AllPMNNetworksSelectAll">Select All</a></td>
+            <td class="center"><a href="#" data-bind="click: AllNetworksSelectAll">Select All</a></td>
+            <td class="center"><a href="#" data-bind="click: AnyoneSelectAll">Select All</a></td>
+        </tr>
+    </tfoot>
+</table>
+
+
+<script type="text/html" id="row">
+    <tr class="parent">
+        <td><span class="bold" data-bind="text: $data.Title"></span></td>
+        <td class="center"><input type="radio" data-bind="checked: $data.Visibility, value: Dns.Enums.AccessType.NoOne" /></td>
+        <td class="center"><input type="radio" data-bind="checked: $data.Visibility, value: Dns.Enums.AccessType.MyNetwork" /></td>
+        <td class="center"><input type="radio" data-bind="checked: $data.Visibility, value: Dns.Enums.AccessType.AllPMNNetworks" /></td>
+        <td class="center"><input type="radio" data-bind="checked: $data.Visibility, value: Dns.Enums.AccessType.AllNetworks" /></td>
+        <td class="center"><input type="radio" data-bind="checked: $data.Visibility, value: Dns.Enums.AccessType.Anyone" /></td>
+    </tr>
+    <!--ko if: $data.Children != null && $data.Children.length > 0-->
+        <!--ko template:{ name:'childrow', foreach: $data.Children }-->
+        <!--/ko-->
+    <!--/ko-->
+</script>
+<script type="text/html" id="childrow">
+    <tr class="child" data-bind="attr:{id: $data.Level}">
+        <td><span class="bold" data-bind="text: $data.Title"></span></td>
+        <td class="center"><input type="radio" data-bind="checked: $data.Visibility, value: Dns.Enums.AccessType.NoOne, visible: $data.isNoOneVisible, disable: $data.isNoOneDisabled" /></td>
+        <td class="center"><input type="radio" data-bind="checked: $data.Visibility, value: Dns.Enums.AccessType.MyNetwork, visible: $data.isMyNetworkVisible" /></td>
+        <td class="center"><input type="radio" data-bind="checked: $data.Visibility, value: Dns.Enums.AccessType.AllPMNNetworks, visible: $data.isAllPMNNetworksVisible" /></td>
+        <td class="center"><input type="radio" data-bind="checked: $data.Visibility, value: Dns.Enums.AccessType.AllNetworks, visible: $data.isAllNetworksVisible" /></td>
+        <td class="center"><input type="radio" data-bind="checked: $data.Visibility, value: Dns.Enums.AccessType.Anyone, visible: $data.isAnyoneVisible" /></td>
+    </tr>
+    <!--ko if: $data.Children != null && $data.Children.length > 0-->
+    <!--ko template:{ name:'childrow', foreach: $data.Children }-->
+    <!--/ko-->
+    <!--/ko-->
+</script>
+
+

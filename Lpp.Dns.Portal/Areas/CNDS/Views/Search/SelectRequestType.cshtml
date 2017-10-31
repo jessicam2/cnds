@@ -1,0 +1,87 @@
+﻿
+@{
+    ViewBag.Title = "Select RequestType";
+    Layout = "~/Views/_DialogLayout.cshtml";
+}
+
+@section Head{
+    <style>
+        .SelectedRequestType {
+            border:2px solid #337ab7;
+            margin-bottom:0px;
+        }
+        #confirmYes,
+        #confirmNo {
+            width:120px;
+        }
+        .list-group-item {
+            padding:3px 1px;
+        }
+    </style>    
+    }
+
+@section Scripts{
+    <script src="/areas/cnds/js/search/selectrequesttype.js"></script>
+   <script>
+       CNDS.Search.SelectRequestType.init();
+    </script>
+}
+
+
+<article data-bind="css: {visible: true}">    
+    <div><label style="font-weight:normal;"><input type="checkbox" data-bind="checked:ShowOnlyAvailable"/>Show only available Request Types</label></div>
+        <div class="list-group" style="max-height:585px;overflow:auto;" data-bind="foreach:{data: AvailableNetworkRequestTypes, as: 'requestType'}">
+            <div class="list-group-item" data-bind="css:requestType.CssClass, attr:{ 'title': requestType.AnchorTitle }">
+                <button data-bind="text:requestType.DisplayName, enable:requestType.ValidRoutes.length > 0, click:$root.onSelectRequestType" class="btn btn-default" style="width:100%;"></button>
+                <table class="table table-condensed" data-bind="visible:requestType.ValidRoutes.length > 0" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th colspan="4">Supported Selected Data Sources</th>
+                        </tr>
+                        <tr>
+                            <th>Network</th>
+                            <th>Project</th>
+                            <th>Data Source</th>
+                            <th>Request Type</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach:requestType.ValidRoutes">
+                        <tr>
+                            <td data-bind="text:Network"></td>
+                            <td data-bind="text:Project"></td>
+                            <td data-bind="text:DataMart"></td>
+                            <td data-bind="text:RequestType"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table table-condensed" data-bind="visible:requestType.NotSupportedDataSources.length > 0" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th colspan="4">Not Supported Selected Data Sources</th>
+                        </tr>
+                        <tr>
+                            <th>Network</th>
+                            <th>Organization</th>
+                            <th>Data Source</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach:requestType.NotSupportedDataSources">
+                        <tr>
+                            <td data-bind="text:Network"></td>
+                            <td data-bind="text:Organization"></td>
+                            <td data-bind="text:Name" colspan="2"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="text-align:center;display:none;" data-bind="visible:requestType.ValidRoutes.length == 0">* No Supported Data Sources *</p>
+            </div>
+        </div>
+        <div id="loadingMessageContainer" data-bind="visible:NetworkRequestTypes().length == 0" class="alert alert-success">
+            <p style="text-align:center;" id="txtLoadingMessage">Loading available request types...</p>
+        </div>
+
+    <nav class="footer">
+        <button class="btn btn-warning pull-right" style="margin-left:10px;width:125px;" data-bind="click:onCancel"><i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cancel</button>
+    </nav>
+</article>
+
