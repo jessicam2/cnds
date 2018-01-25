@@ -16,7 +16,7 @@
     <RestorePackages>true</RestorePackages>
     <NuGetPackageImportStamp>82e362e5</NuGetPackageImportStamp>
     <TargetFrameworkProfile />
-    <TypeScriptToolsVersion>2.1</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <Prefer32Bit>false</Prefer32Bit>
@@ -82,6 +82,8 @@
     <Compile Include="CNDS\CNDSSearchMetaDataDTO.cs" />
     <Compile Include="CNDS\CNDSSecurityGroupDTO.cs" />
     <Compile Include="CNDS\CNDSSecurityGroupUserDTO.cs" />
+    <Compile Include="CNDS\CNDSSourceRequestTypeDTO.cs" />
+    <Compile Include="CNDS\CNDSSourceRequestTypeRoutingDTO.cs" />
     <Compile Include="CNDS\CNDSUpdateAssignedPermissionDTO.cs" />
     <Compile Include="CNDS\CNDSMappingItemDTO.cs" />
     <Compile Include="CNDS\CNDSUpdateDataMartPriorityAndDueDateDTO.cs" />

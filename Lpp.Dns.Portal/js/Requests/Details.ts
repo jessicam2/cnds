@@ -434,7 +434,7 @@ module Requests.Details {
                     action = self.DefaultSave(false);
 
                 } else {
-                    action = $.Deferred().resolve();
+                    action = $.Deferred<boolean>().resolve();
                 }
 
                 action.done(() => {
@@ -602,7 +602,7 @@ module Requests.Details {
 
         public DefaultSave(reload: boolean, isNewRequest: boolean = null, errorHandler: (err: any) => void = null): JQueryDeferred<boolean> {
             var self = this;
-            var deferred = $.Deferred();
+            var deferred = $.Deferred<boolean>();
             if (isNewRequest == null) {
                 isNewRequest = false;
             }
@@ -704,7 +704,7 @@ module Requests.Details {
         }
 
         public Save(showMessage: boolean = true): JQueryDeferred<boolean> {
-            var deferred = $.Deferred();
+            var deferred = $.Deferred<boolean>();
 
             if (!this.Validate())
                 return deferred.reject();
@@ -765,7 +765,7 @@ module Requests.Details {
         }
 
         private PostSave(showMessage: boolean): JQueryDeferred<boolean> {
-            var deferred = $.Deferred();
+            var deferred = $.Deferred<boolean>();
             var request = this.Request.toData();
 
             //Post it as a save

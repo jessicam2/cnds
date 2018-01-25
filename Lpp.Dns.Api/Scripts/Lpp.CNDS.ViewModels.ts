@@ -1,4 +1,4 @@
-/// <reference path='../../Lpp.Pmn.Resources/Scripts/typings/knockout.mapping/knockout.mapping.d.ts' />
+/// <reference path='../../Lpp.Pmn.Resources/node_modules/@types/knockout.mapping/index.d.ts' />
 /// <reference path='Lpp.CNDS.Interfaces.ts' />
 module CNDS.ViewModels {
 	 export class ViewModel<D>{
@@ -1384,6 +1384,45 @@ module CNDS.ViewModels {
 	 	 	 	DomainDataValue: this.DomainDataValue(),
 	 	 	 	DomainDataDomainReferenceID: this.DomainDataDomainReferenceID(),
 	 	 	 	DomainAccessValue: this.DomainAccessValue(),
+	 	 	  };
+	 	  }
+
+
+
+	 }
+	 export class NetworkEntityViewModel extends EntityDtoWithIDViewModel<CNDS.Interfaces.INetworkEntityDTO>{
+	 	 public NetworkID: KnockoutObservable<any>;
+	 	 public Network: KnockoutObservable<string>;
+	 	 public EntityType: KnockoutObservable<CNDS.Enums.EntityType>;
+	 	 public NetworkEntityID: KnockoutObservable<any>;
+	 	 constructor(NetworkEntityDTO?: CNDS.Interfaces.INetworkEntityDTO)
+	 	  {
+	 	 	  super();
+	 	 	 if (NetworkEntityDTO== null) {
+	 	 	 	 this.NetworkID = ko.observable<any>();
+	 	 	 	 this.Network = ko.observable<any>();
+	 	 	 	 this.EntityType = ko.observable<any>();
+	 	 	 	 this.NetworkEntityID = ko.observable<any>();
+	 	 	 	 this.ID = ko.observable<any>();
+	 	 	 	 this.Timestamp = ko.observable<any>();
+	 	 	  }else{
+	 	 	 	 this.NetworkID = ko.observable(NetworkEntityDTO.NetworkID);
+	 	 	 	 this.Network = ko.observable(NetworkEntityDTO.Network);
+	 	 	 	 this.EntityType = ko.observable(NetworkEntityDTO.EntityType);
+	 	 	 	 this.NetworkEntityID = ko.observable(NetworkEntityDTO.NetworkEntityID);
+	 	 	 	 this.ID = ko.observable(NetworkEntityDTO.ID);
+	 	 	 	 this.Timestamp = ko.observable(NetworkEntityDTO.Timestamp);
+	 	 	 }
+	 	 }
+
+	 	 public toData(): CNDS.Interfaces.INetworkEntityDTO{
+	 	 	  return {
+	 	 	 	NetworkID: this.NetworkID(),
+	 	 	 	Network: this.Network(),
+	 	 	 	EntityType: this.EntityType(),
+	 	 	 	NetworkEntityID: this.NetworkEntityID(),
+	 	 	 	ID: this.ID(),
+	 	 	 	Timestamp: this.Timestamp(),
 	 	 	  };
 	 	  }
 

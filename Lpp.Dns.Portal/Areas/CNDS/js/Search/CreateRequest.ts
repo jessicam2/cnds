@@ -63,7 +63,7 @@ module CNDS.Search.CreateRequest {
 
         constructor(
             request: Dns.ViewModels.RequestViewModel,
-            requestTypeDetails: CNDS.Search.Interfaces.IRequestTypeSelection,
+            requestTypeDetails: Dns.Interfaces.ICNDSSourceRequestTypeDTO,
             requesterCenterList: Dns.Interfaces.IRequesterCenterDTO[],
             workplanList: Dns.Interfaces.IWorkplanTypeDTO[],
             reportAggregationLevelsList: Dns.Interfaces.IReportAggregationLevelDTO[],
@@ -300,7 +300,7 @@ module CNDS.Search.CreateRequest {
     export function init() {
 
         let window: kendo.ui.Window = Global.Helpers.GetDialogWindow();
-        let requestTypeDetails = (<any>(window.options)).parameters as CNDS.Search.Interfaces.IRequestTypeSelection;
+        let requestTypeDetails = (<any>(window.options)).parameters as Dns.Interfaces.ICNDSSourceRequestTypeDTO;
         
         $.when<any>(
             Dns.WebApi.Projects.GetActivityTreeByProjectID(requestTypeDetails.ProjectID),

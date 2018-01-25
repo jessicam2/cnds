@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Search Data Sources";
+    ViewBag.Title = "Review Data Source Selection";
     Layout = "~/Views/_Layout.cshtml";
 }
 
@@ -27,12 +27,13 @@
         <ol class="breadcrumb">
             <li><a href="/">Home</a></li>
             <li>CNDS</li>
-            <li class="active">Search Data Sources</li>
+            <li><a href="/cnds/search/datasources/">Search Data Sources</a></li>
+            <li class="active">Review Data Source Selection</li>
         </ol>
     </div>
 
     <div class="panel-body" >
-        <p class="alert alert-info">Select the Data Sources to include in the request.</p>
+        <p class="alert alert-info">Select the DataMarts you would like to include in your request.</p>
         <div id="gDataSources"></div>
     </div>
 

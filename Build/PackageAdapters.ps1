@@ -9,7 +9,7 @@ $Paths = @(("Lpp.Dns.DataMart.Model.QueryComposer","$PSScriptRoot\..\Lpp.Adapter
 				("Lpp.Dns.DataMart.Model.Metadata","$PSScriptRoot\..\Lpp.Adapters\Lpp.Dns.DataMart.Model.Metadata\bin\*"),
 				("Lpp.Dns.DataMart.Model.Processors","$PSScriptRoot\..\Lpp.Adapters\Lpp.Dns.DataMart.Model.Processors\bin\*"))
 
-$attr = (get-content "CommonAssemblyInfo.cs" | select-string "AssemblyFileVersion").ToString()
+$attr = (get-content "$PSScriptRoot\CommonAssemblyInfo.cs" | select-string "AssemblyFileVersion").ToString()
 # Parse the attribute to get the 3 digit version
 $s = $attr.IndexOf("`"")+1
 $e = $attr.LastIndexOf(".")
@@ -25,8 +25,8 @@ foreach($p in $Paths)
 	    $zipName = $p[0]
 	    $zipPath = $p[1]
 	    $zipPath = $zipPath.Substring(0,$zipPath.length - 2)
-	    if((Test-Path -Path "..\Lpp.Dns.Api\App_Data\$zipName.$version.zip" )){
-			    Remove-Item "..\Lpp.Dns.Api\App_Data\$zipName.$version.zip" -Force
+	    if((Test-Path -Path "$PSScriptRoot\..\Lpp.Dns.Api\App_Data\$zipName.$version.zip" )){
+			    Remove-Item "$PSScriptRoot\..\Lpp.Dns.Api\App_Data\$zipName.$version.zip" -Force
 	    }
         [System.IO.Compression.ZipFile]::CreateFromDirectory($zipPath, "$PSScriptRoot\..\Lpp.Dns.Api\App_Data\$zipName.$version.zip", $compressionLevel, $includeBaseDirectory);
     }

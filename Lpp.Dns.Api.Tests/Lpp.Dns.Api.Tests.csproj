@@ -161,6 +161,7 @@
     <Compile Include="ControllerTest.cs" />
     <Compile Include="DataControllerTest.cs" />
     <Compile Include="EDMTest.cs" />
+    <Compile Include="Requests\CNDSNetworkRequestTypesTests.cs" />
     <Compile Include="Requests\RequestNotificationTests.cs" />
     <Compile Include="Requests\RequestObserversTests.cs" />
     <Compile Include="Requests\RequestSecurityTests.cs" />
@@ -210,6 +211,14 @@
     <None Include="TaskMatrix\PMNDEV-4121\PMN_Activities_Export_20150420.json" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Lpp.CNDS.ApiClient\Lpp.CNDS.ApiClient.csproj">
+      <Project>{eac5a892-013d-460c-babc-b14657c79de2}</Project>
+      <Name>Lpp.CNDS.ApiClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lpp.CNDS.DTO\Lpp.CNDS.DTO.csproj">
+      <Project>{6fa65840-f91b-4d0b-806f-4b928e8aa394}</Project>
+      <Name>Lpp.CNDS.DTO</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Lpp.Dns.Api\Lpp.Dns.Api.csproj">
       <Project>{2ae3e366-45d0-44cc-97dc-fca56de0e671}</Project>
       <Name>Lpp.Dns.Api</Name>

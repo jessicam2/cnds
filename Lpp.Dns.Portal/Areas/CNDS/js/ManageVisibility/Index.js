@@ -1,8 +1,13 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 /// <reference path="../../../../js/_layout.ts" />
 var CNDS;
 (function (CNDS) {
@@ -17,6 +22,8 @@ var CNDS;
                     self.ID = metadata.ID;
                     self.EntitiyID = metadata.EntityID;
                     self.DomainUseID = metadata.DomainUseID;
+                    if (metadata.Visibility > Dns.Enums.AccessType.AllNetworks)
+                        metadata.Visibility = Dns.Enums.AccessType.AllNetworks;
                     self.Visibility = ko.observable(metadata.Visibility);
                     self.Level = "Level" + level;
                     self.Children = metadata.ChildMetadata == null ? [] : metadata.ChildMetadata.map(function (item) { return new ManageVisibilityViewModel(item, level + 1, self); });
@@ -27,59 +34,29 @@ var CNDS;
                         });
                     });
                     self.isAnyoneVisible = ko.computed(function () {
-                        if (parent == null)
-                            return true;
-                        else if (parent.Visibility() == Dns.Enums.AccessType.Anyone)
-                            return true;
-                        else
-                            return false;
-                    });
+                        return self.Parent == null || self.Parent.Visibility() == Dns.Enums.AccessType.Anyone;
+                    }, self, { deferred: true });
                     self.isAllNetworksVisible = ko.computed(function () {
-                        if (parent == null)
-                            return true;
-                        else if (parent.Visibility() == Dns.Enums.AccessType.Anyone || parent.Visibility() == Dns.Enums.AccessType.AllNetworks)
-                            return true;
-                        else
-                            return false;
-                    });
+                        return self.Parent == null || self.Parent.Visibility() >= Dns.Enums.AccessType.AllNetworks;
+                    }, self, { deferred: true });
                     self.isAllPMNNetworksVisible = ko.computed(function () {
-                        if (parent == null)
-                            return true;
-                        else if (parent.Visibility() == Dns.Enums.AccessType.Anyone || parent.Visibility() == Dns.Enums.AccessType.AllNetworks || parent.Visibility() == Dns.Enums.AccessType.AllPMNNetworks)
-                            return true;
-                        else
-                            return false;
-                    });
+                        return self.Parent == null || self.Parent.Visibility() >= Dns.Enums.AccessType.AllPMNNetworks;
+                    }, self, { deferred: true });
                     self.isMyNetworkVisible = ko.computed(function () {
-                        if (parent == null)
-                            return true;
-                        else if (parent.Visibility() == Dns.Enums.AccessType.Anyone || parent.Visibility() == Dns.Enums.AccessType.AllNetworks || parent.Visibility() == Dns.Enums.AccessType.AllPMNNetworks || parent.Visibility() == Dns.Enums.AccessType.MyNetwork)
-                            return true;
-                        else
-                            return false;
-                    });
+                        return self.Parent == null || self.Parent.Visibility() >= Dns.Enums.AccessType.MyNetwork;
+                    }, self, { deferred: true });
                     self.isNoOneVisible = ko.computed(function () {
-                        if (parent == null)
-                            return true;
-                        else if (parent.Visibility() == Dns.Enums.AccessType.Anyone || parent.Visibility() == Dns.Enums.AccessType.AllNetworks || parent.Visibility() == Dns.Enums.AccessType.AllPMNNetworks || parent.Visibility() == Dns.Enums.AccessType.MyNetwork || parent.Visibility() == Dns.Enums.AccessType.NoOne)
-                            return true;
-                        else
-                            return false;
-                    });
+                        return self.Parent == null || self.Parent.Visibility() >= Dns.Enums.AccessType.NoOne;
+                    }, self, { deferred: true });
                     self.isNoOneDisabled = ko.computed(function () {
-                        if (parent == null)
-                            return false;
-                        else if (parent.Visibility() == Dns.Enums.AccessType.NoOne)
-                            return true;
-                        else
-                            return false;
-                    });
+                        return self.Parent == null || self.Parent.Visibility() == Dns.Enums.AccessType.NoOne;
+                    }, this, { deferred: true });
                 }
                 ManageVisibilityViewModel.prototype.toData = function () {
                     var self = this;
                     return {
                         ID: self.ID,
-                        Title: "asd",
+                        Title: self.Title,
                         DataType: null,
                         Description: null,
                         IsMultiValue: false,
@@ -103,7 +80,16 @@ var CNDS;
                 function ViewModel(bindingControl, metadata) {
                     var _this = _super.call(this, bindingControl) || this;
                     var self = _this;
-                    self.Metadata = metadata.map(function (item) { return new ManageVisibilityViewModel(item, 1, null); });
+                    var sortedMetadata = [];
+                    ko.utils.arrayForEach(metadata, function (item) {
+                        if (item.DataType.toLowerCase() != "container" && item.DataType.toLowerCase() != "booleangroup")
+                            sortedMetadata.push(item);
+                    });
+                    ko.utils.arrayForEach(metadata, function (item) {
+                        if (item.DataType.toLowerCase() == "container" || item.DataType.toLowerCase() == "booleangroup")
+                            sortedMetadata.push(item);
+                    });
+                    self.Metadata = sortedMetadata.map(function (item) { return new ManageVisibilityViewModel(item, 1, null); });
                     self.NoOneSelectAll = function () {
                         ko.utils.arrayForEach(self.Metadata, function (item) {
                             item.Visibility(Dns.Enums.AccessType.NoOne);
@@ -128,6 +114,10 @@ var CNDS;
                         ko.utils.arrayForEach(self.Metadata, function (item) {
                             item.Visibility(Dns.Enums.AccessType.Anyone);
                         });
+                    };
+                    self.toData = function () {
+                        var output = ko.utils.arrayMap(self.Metadata, function (m) { return m.toData(); });
+                        return output;
                     };
                     return _this;
                 }

@@ -256,15 +256,15 @@
 
 <script type="text/html" id="CheckBox-tree">
     <div>
-        <i style="margin-left:-20px; margin-bottom:5px;" class="k-icon k-plus" data-bind="click:$root.OpenChildDetail.bind($data, DomainID, EntityType),attr: {ID: 'img-' + DomainID + EntityType}, visible: $data.SubDomainUses.length > 0"></i>
+        <i style="margin-left:-20px; margin-bottom:5px;" class="k-icon k-plus" data-bind="click:$root.OpenChildDetail.bind($data, DomainID, EntityType),attr: {ID: 'img-' + DomainID + EntityType}, visible: $data.SubDomainUses().length > 0"></i>
         <label>
             <input type="checkbox" data-bind="checked:$data.CheckedForUse">
             <span style="font-weight:normal;" data-bind="text:$data.Title"></span>
         </label>
     </div>
-    <!--ko if: $data.SubDomainUses != undefined || $data.SubDomainUses != null-->
+    <!--ko if: $data.SubDomainUses() != undefined || $data.SubDomainUses() != null-->
         <ul data-bind="attr: {ID: 'children-' + DomainID + EntityType}, visible:false">
-        <!--ko foreach: $data.SubDomainUses-->
+        <!--ko foreach: $data.SubDomainUses()-->
             <br />
             <li style="list-style:none;" data-bind="template:{ name:'CheckBox-tree', data: $data }"></li>
         <!--/ko-->

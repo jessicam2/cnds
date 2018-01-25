@@ -4316,8 +4316,28 @@ var Dns;
                     params = '?' + params.substr(1);
                 return Helpers.DeleteAPIValue('CNDSRequestTypes/DeleteMapping' + params, doNotHandleFail);
             };
-            CNDSRequestTypes.AvailableRequestTypesForNewRequest = function ($filter, $select, $orderby, $skip, $top, doNotHandleFail) {
+            CNDSRequestTypes.AvailableRequestTypesForNewRequestOriginal = function ($filter, $select, $orderby, $skip, $top, doNotHandleFail) {
                 var params = '';
+                if ($filter)
+                    params += '&$filter=' + $filter;
+                if ($select)
+                    params += '&$select=' + $select;
+                if ($orderby)
+                    params += '&$orderby=' + $orderby;
+                if ($skip)
+                    params += '&$skip=' + $skip;
+                if ($top)
+                    params += '&$top=' + $top;
+                if (params.length > 0)
+                    params = '?' + params.substr(1);
+                return Helpers.GetAPIResult('CNDSRequestTypes/AvailableRequestTypesForNewRequestOriginal' + params, doNotHandleFail);
+            };
+            CNDSRequestTypes.AvailableRequestTypesForNewRequest = function (id, $filter, $select, $orderby, $skip, $top, doNotHandleFail) {
+                var params = '';
+                if (id != null)
+                    for (var j = 0; j < id.length; j++) {
+                        params += '&id=' + id[j];
+                    }
                 if ($filter)
                     params += '&$filter=' + $filter;
                 if ($select)

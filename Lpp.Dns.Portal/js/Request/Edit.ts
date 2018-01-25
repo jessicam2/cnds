@@ -1,7 +1,4 @@
-﻿/// <reference path="../../../Lpp.Pmn.Resources/Scripts/typings/bootstrap.dns.d.ts" />
-/// <reference path="../../../Lpp.Pmn.Resources/Scripts/typings/knockout/knockout.d.ts" />
-
-module Request.Edit {
+﻿module PMNRequest.Edit {
     export var RawModel: any = null;
     export var GetActivitiesUrlTemplate: string = '';
     export var GetSubActivitiesUrlTemplate: string = '';
@@ -389,7 +386,7 @@ module Request.Edit {
         }
 
         public onSelectProject() {
-            Global.Helpers.ShowDialog("Select Project", "/request/selectproject", ["Close"], 550, 400, { Projects: Request.Edit.RawModel.Projects }).done((result) => {
+            Global.Helpers.ShowDialog("Select Project", "/request/selectproject", ["Close"], 550, 400, { Projects: RawModel.Projects }).done((result) => {
                 if (!result)
                     return;
 
@@ -402,7 +399,7 @@ module Request.Edit {
 
     export class RequestDataMartsViewModel {
         public Model: IRequestDataMartsEditModel;
-        public DataMarts: KnockoutObservableArray<Request.Edit.Routings>;
+        public DataMarts: KnockoutObservableArray<Routings>;
         public SelectedDataMartIDs: KnockoutObservableArray<string>;
         public SerializedSelectedDataMarts: KnockoutObservable<string>;
         public SelectedRequestDataMarts: KnockoutObservableArray<Dns.Interfaces.IRequestDataMartDTO>;
@@ -435,7 +432,7 @@ module Request.Edit {
                     d.Organization = 'N/A';
 
                 var dm = new Dns.ViewModels.DataMartListViewModel(d);
-                var dataMart = new Request.Edit.Routings(dm);
+                var dataMart = new Routings(dm);
 
                 //if the dataMart is a selected datamart, set the saved due date and priority
                 self.SelectedRequestDataMarts().forEach((sdm) => {

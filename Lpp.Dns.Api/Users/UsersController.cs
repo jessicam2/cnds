@@ -1126,7 +1126,7 @@ namespace Lpp.Dns.Api.Users
                 cnds.Add(new MenuItemDTO
                 {
                     text = "New Request",
-                    url = "/cnds/search/NewRequest/"
+                    url = "/cnds/search/datasources/"
                 });
             }
 

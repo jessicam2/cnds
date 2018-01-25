@@ -1326,6 +1326,52 @@ module Dns.Interfaces
 	 	 	'SecurityGroups': { type:'any[]', nullable: false},
 	 	 }
 	 }
+	 export interface ICNDSSourceRequestTypeDTO{
+	 	 ProjectID: any;
+	 	 Project: string;
+	 	 RequestTypeID: any;
+	 	 RequestType: string;
+	 	 LocalRoutes: ICNDSSourceRequestTypeRoutingDTO[];
+	 	 ExternalRoutes: ICNDSSourceRequestTypeRoutingDTO[];
+	 	 InvalidRoutes: ICNDSSourceRequestTypeRoutingDTO[];
+	 }
+	 export var KendoModelCNDSSourceRequestTypeDTO: any = {
+	 	 fields: {
+	 	 	'ProjectID': { type:'any', nullable: false},
+	 	 	'Project': { type:'string', nullable: false},
+	 	 	'RequestTypeID': { type:'any', nullable: false},
+	 	 	'RequestType': { type:'string', nullable: false},
+	 	 	'LocalRoutes': { type:'any[]', nullable: false},
+	 	 	'ExternalRoutes': { type:'any[]', nullable: false},
+	 	 	'InvalidRoutes': { type:'any[]', nullable: false},
+	 	 }
+	 }
+	 export interface ICNDSSourceRequestTypeRoutingDTO{
+	 	 MappingDefinitionID?: any;
+	 	 NetworkID: any;
+	 	 Network: string;
+	 	 ProjectID: any;
+	 	 Project: string;
+	 	 RequestTypeID: any;
+	 	 RequestType: string;
+	 	 DataMartID: any;
+	 	 DataMart: string;
+	 	 IsLocal: boolean;
+	 }
+	 export var KendoModelCNDSSourceRequestTypeRoutingDTO: any = {
+	 	 fields: {
+	 	 	'MappingDefinitionID': { type:'any', nullable: true},
+	 	 	'NetworkID': { type:'any', nullable: false},
+	 	 	'Network': { type:'string', nullable: false},
+	 	 	'ProjectID': { type:'any', nullable: false},
+	 	 	'Project': { type:'string', nullable: false},
+	 	 	'RequestTypeID': { type:'any', nullable: false},
+	 	 	'RequestType': { type:'string', nullable: false},
+	 	 	'DataMartID': { type:'any', nullable: false},
+	 	 	'DataMart': { type:'string', nullable: false},
+	 	 	'IsLocal': { type:'boolean', nullable: false},
+	 	 }
+	 }
 	 export interface ICNDSMappingItemDTO{
 	 	 ID: any;
 	 	 Name: string;
@@ -4491,13 +4537,13 @@ module Dns.Interfaces
 	 	 }
 	 }
 	 export interface ICNDSNetworkProjectRequestTypeDataMartDTO extends ICNDSProjectRequestTypeDataMartDTO{
-	 	 DefinitionID: any;
+	 	 DefinitionID?: any;
 	 	 NetworkID: any;
 	 	 Network: string;
 	 }
 	 export var KendoModelCNDSNetworkProjectRequestTypeDataMartDTO: any = {
 	 	 fields: {
-	 	 	'DefinitionID': { type:'any', nullable: false},
+	 	 	'DefinitionID': { type:'any', nullable: true},
 	 	 	'NetworkID': { type:'any', nullable: false},
 	 	 	'Network': { type:'string', nullable: false},
 	 	 	'ProjectID': { type:'any', nullable: false},

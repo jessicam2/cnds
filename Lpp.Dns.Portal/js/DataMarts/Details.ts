@@ -204,11 +204,14 @@ module DataMarts.Details {
         }
 
         public Save() {
-            var self = this;
+            let self = this;
+
             if (!super.Validate())
                 return;
-            var dm = this.DataMart.toData()
-            var meta = []
+
+            let dm = this.DataMart.toData()
+
+            let meta = []
             ko.utils.arrayForEach(this.Metadata.NonGroupedMetadata, (item) => {
                 meta.push(item.ToData())
             });
@@ -221,28 +224,28 @@ module DataMarts.Details {
                 //Update the values for the ID and timestamp as necessary.
                 vm.DataMart.ID(datamart[0].ID);
                 vm.DataMart.Timestamp(datamart[0].Timestamp);
-                var visibilities: Dns.Interfaces.IMetadataDTO[] = [];
-                ko.utils.arrayForEach(self.MetadataViewer.Metadata, (item) => {
-                    visibilities.push(item.toData());
-                });
+
+                let visibilities = self.MetadataViewer.toData();
+                
                 $.when<any>(
                     Dns.WebApi.DataMarts.UpdateDataMartVisibility(visibilities)
                 ).done(() => {
                     // Save everything else
-                    var installedModels = this.InstalledDataModels.InstalledDataModels().map((o) => {
+                    let installedModels = this.InstalledDataModels.InstalledDataModels().map((o) => {
                         o.DataMartID(vm.DataMart.ID());
                         return o.toData();
                     });
 
-                    var datamartAcls = this.DataMartAcls().map((a) => {
+                    let datamartAcls = this.DataMartAcls().map((a) => {
                         a.DataMartID(this.DataMart.ID());
                         return a.toData();
                     });
 
-                    var requestTypeAcls = this.DataMartRequestTypeAcls().map((a) => {
+                    let requestTypeAcls = this.DataMartRequestTypeAcls().map((a) => {
                         a.DataMartID(vm.DataMart.ID());
                         return a.toData();
                     });
+
                     $.when<any>(
                         Dns.WebApi.Security.UpdateDataMartPermissions(datamartAcls),
                         Dns.WebApi.Security.UpdateDataMartRequestTypePermissions(requestTypeAcls),

@@ -14,15 +14,15 @@ namespace Lpp.CNDS.DTO.Enums
     [DataContract]
     public enum AccessType
     {
-        [DataMember, Description("No One")]
+        [EnumMember, Description("No One")]
         NoOne = 0,
-        [DataMember, Description("My Network Members")]
+        [EnumMember, Description("My Network Members")]
         MyNetwork = 100,
-        [DataMember, Description("All PMN Members")]
+        [EnumMember, Description("All PMN Members")]
         AllPMNNetworks = 1000,
-        [DataMember, Description("All PMN and CNDS Members")]
+        [EnumMember, Description("All PMN and CNDS Members")]
         AllNetworks = 10000,
-        [DataMember, Description("Anyone")]
+        [EnumMember, Description("Anyone")]
         Anyone = 100000
     }
 }

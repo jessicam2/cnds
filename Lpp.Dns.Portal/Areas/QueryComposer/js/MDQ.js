@@ -1,10 +1,15 @@
 /// <reference path="../../../js/_rootlayout.ts" />
 /// <reference path="termvaluefilter.ts" />
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var Plugins;
 (function (Plugins) {
     var Requests;
@@ -324,6 +329,7 @@ var Plugins;
                                     term.Values(termValues);
                                     if (codeTerms.indexOf(term.Type().toUpperCase()) >= 0) {
                                         if (term.Values != null && term.Values().CodeValues != null) {
+                                            //Do not re-map as the CodeValues property already exists...
                                         }
                                         else {
                                             _this.TermList.forEach(function (item) {
@@ -487,6 +493,7 @@ var Plugins;
                                     term.Values(termValues);
                                     if (codeTerms.indexOf(term.Type().toUpperCase()) >= 0) {
                                         if (term.Values != null && term.Values().CodeValues != null) {
+                                            //Do not re-map as the CodeValues property already exists...
                                         }
                                         else {
                                             _this.TermList.forEach(function (item) {
@@ -974,6 +981,7 @@ var Plugins;
                             });
                         }
                         if (templateID == null) {
+                            //Do nothing here. The request is being loaded, and RawRequestData has already been populated.
                         }
                         else {
                             var queryTemplate = queryTemplates == null ? {

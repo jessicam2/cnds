@@ -5,9 +5,79 @@
 }
 <script src="~/Areas/CNDS/js/Search/Organizations.js"></script>
 <script src="@this.ResourceUrl("/scripts/kendo/2016.2.523/jszip.min.js")"></script>
+<script src="@this.ResourceUrl("/scripts/jquery-resizable/jquery-resizable.js")"></script>
 <style>
     p {
         margin: 0 0 0;
+    }
+
+    .panel-container {
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+    }
+
+    #selectionSection {
+        flex: 0 0 auto; /* only manually resize */
+        padding: 10px;
+        width: 300px;
+        min-height: 700px;
+        min-width: 10%;
+        width: 33%;
+        white-space: nowrap;
+        float: left;
+    }
+
+    .splitter {
+        flex: 0 0 auto;
+        width: 5px;
+        background: lightgrey;
+        border-width: 0;
+        float: left;
+        height: 680px;
+        cursor: col-resize;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    #resultsSection {
+        flex: 1 1 auto; /* resizable */
+        padding: 10px;
+        width: 50%;
+        min-width: 10%;
+        min-height: 700px;
+        float: left;
+    }
+
+    .panel-container-vertical {
+        display: flex;
+        flex-direction: column;
+        height: 700px;
+        overflow: hidden;
+    }
+
+    #selectedPanel {
+        flex: 0 0 auto; /* only manually resize */
+        min-height: 70px;
+        height: 275px;
+        width: 100%;
+        white-space: nowrap;
+        overflow: scroll;
+    }
+
+    .splitter-horizontal {
+        flex: 0 0 auto;
+        height: 5px;
+        background: lightgrey;
+        cursor: row-resize;
+        margin-bottom: 20px;
+    }
+
+    #selectionPanel {
+        flex: 1 1 auto; /* resizable */
+        min-height: 10px !important; /* NOTE: This won't be respected! Explicit resize forces size of this panel */
+        height: 325px;
+        overflow: scroll;
     }
 </style>
 <article class="panel panel-default" data-bind="css: {visible: true}">
@@ -20,10 +90,11 @@
         </ol>
     </div>
     <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <section class="col-md-4" style="max-height:700px; height:700px;">
-                    <div class="panel panel-default" style="min-height:275px; max-height:275px; overflow: scroll">
+        <div class="container-fluid panel-container">
+            <section id="selectionSection">
+                <div class="panel-container-vertical">
+
+                    <div id="selectedPanel" class="panel panel-default">
                         <div class="panel-heading">Search Summary</div>
                         <div class="panel-body">
                             <div id="selectedDomainTree">
@@ -37,10 +108,12 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="panel panel-default" style="min-height:400px; max-height:400px; overflow:scroll">
+                    <div class="splitter-horizontal"></div>
+                    <div id="selectionPanel" class="panel panel-default">
                         <div class="panel-heading">
-                            Search Criteria
+                            <div style="float:left;margin-top:3%;">Search Criteria</div>
+                            <button type="button" data-bind="click: ClearSearch" class="btn btn-primary pull-right">Clear Search</button>
+                            <br style="clear:both" />
                         </div>
                         <div class="panel-body">
                             <div id="domainTree">
@@ -52,15 +125,18 @@
                             </div>
                         </div>
                     </div>
-                </section>
-                <section class="col-md-8" style="max-height:700px; height:700px;">
-                    <div class="panel panel-default" style="height:100%">
-                        <div class="panel-heading">
-                            <div style="float: left; height: 20px; margin-top: 5px;">Organizations Found</div>
-                            <br style="clear:both;" />
-                        </div>
-                        <div class="panel-body">
-                            <div id="gOrganizationsGrid" data-bind="kendoGrid: {
+                </div>
+
+            </section>
+            <div class="splitter"></div>
+            <section id="resultsSection" style="max-height:700px; height:700px;">
+                <div class="panel panel-default" style="height:100%;">
+                    <div class="panel-heading">
+                        <div style="float: left; height: 20px; margin-top: 5px;">Organization(s) Found</div>
+                        <br style="clear:both;" />
+                    </div>
+                    <div class="panel-body">
+                        <div id="gOrganizationsGrid" data-bind="kendoGrid: {
                                                                 toolbar: ['excel', 'pdf'],
                                                                 excel: {
                                                                     fileName: 'Organization-Export.xlsx'
@@ -81,10 +157,9 @@
                                                                     {field: 'ContactInformation', title: 'Contact Information', encoded: false}
                                                                 ]
                                                             }"></div>
-                        </div>
                     </div>
-                </section>
-            </div>
+                </div>
+            </section>
         </div>
     </div>
 </article>
@@ -112,6 +187,20 @@
     </ul>
     <!--/ko-->
 </script>
+
+<script>
+    $("#selectionSection").resizable({
+        handleSelector: ".splitter",
+        resizeWidth: true,
+        resizeHeight: false,
+    });
+    $("#selectedPanel").resizable({
+        handleSelector: ".splitter-horizontal",
+        resizeWidth: false,
+        resizeHeight: true,
+    });
+</script>
+
 
 <script type="text/html" id="Ref-tree">
     <div>

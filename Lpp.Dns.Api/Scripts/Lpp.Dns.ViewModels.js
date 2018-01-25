@@ -1,9 +1,14 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-/// <reference path='../../Lpp.Pmn.Resources/Scripts/typings/knockout.mapping/knockout.mapping.d.ts' />
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+/// <reference path='../../Lpp.Pmn.Resources/node_modules/@types/knockout.mapping/index.d.ts' />
 /// <reference path='Lpp.Dns.Interfaces.ts' />
 var Dns;
 (function (Dns) {
@@ -476,6 +481,91 @@ var Dns;
             return CNDSSecurityGroupUserViewModel;
         }(ViewModel));
         ViewModels.CNDSSecurityGroupUserViewModel = CNDSSecurityGroupUserViewModel;
+        var CNDSSourceRequestTypeViewModel = (function (_super) {
+            __extends(CNDSSourceRequestTypeViewModel, _super);
+            function CNDSSourceRequestTypeViewModel(CNDSSourceRequestTypeDTO) {
+                var _this = _super.call(this) || this;
+                if (CNDSSourceRequestTypeDTO == null) {
+                    _this.ProjectID = ko.observable();
+                    _this.Project = ko.observable();
+                    _this.RequestTypeID = ko.observable();
+                    _this.RequestType = ko.observable();
+                    _this.LocalRoutes = ko.observableArray();
+                    _this.ExternalRoutes = ko.observableArray();
+                    _this.InvalidRoutes = ko.observableArray();
+                }
+                else {
+                    _this.ProjectID = ko.observable(CNDSSourceRequestTypeDTO.ProjectID);
+                    _this.Project = ko.observable(CNDSSourceRequestTypeDTO.Project);
+                    _this.RequestTypeID = ko.observable(CNDSSourceRequestTypeDTO.RequestTypeID);
+                    _this.RequestType = ko.observable(CNDSSourceRequestTypeDTO.RequestType);
+                    _this.LocalRoutes = ko.observableArray(CNDSSourceRequestTypeDTO.LocalRoutes == null ? null : CNDSSourceRequestTypeDTO.LocalRoutes.map(function (item) { return new CNDSSourceRequestTypeRoutingViewModel(item); }));
+                    _this.ExternalRoutes = ko.observableArray(CNDSSourceRequestTypeDTO.ExternalRoutes == null ? null : CNDSSourceRequestTypeDTO.ExternalRoutes.map(function (item) { return new CNDSSourceRequestTypeRoutingViewModel(item); }));
+                    _this.InvalidRoutes = ko.observableArray(CNDSSourceRequestTypeDTO.InvalidRoutes == null ? null : CNDSSourceRequestTypeDTO.InvalidRoutes.map(function (item) { return new CNDSSourceRequestTypeRoutingViewModel(item); }));
+                }
+                return _this;
+            }
+            CNDSSourceRequestTypeViewModel.prototype.toData = function () {
+                return {
+                    ProjectID: this.ProjectID(),
+                    Project: this.Project(),
+                    RequestTypeID: this.RequestTypeID(),
+                    RequestType: this.RequestType(),
+                    LocalRoutes: this.LocalRoutes == null ? null : this.LocalRoutes().map(function (item) { return item.toData(); }),
+                    ExternalRoutes: this.ExternalRoutes == null ? null : this.ExternalRoutes().map(function (item) { return item.toData(); }),
+                    InvalidRoutes: this.InvalidRoutes == null ? null : this.InvalidRoutes().map(function (item) { return item.toData(); }),
+                };
+            };
+            return CNDSSourceRequestTypeViewModel;
+        }(ViewModel));
+        ViewModels.CNDSSourceRequestTypeViewModel = CNDSSourceRequestTypeViewModel;
+        var CNDSSourceRequestTypeRoutingViewModel = (function (_super) {
+            __extends(CNDSSourceRequestTypeRoutingViewModel, _super);
+            function CNDSSourceRequestTypeRoutingViewModel(CNDSSourceRequestTypeRoutingDTO) {
+                var _this = _super.call(this) || this;
+                if (CNDSSourceRequestTypeRoutingDTO == null) {
+                    _this.MappingDefinitionID = ko.observable();
+                    _this.NetworkID = ko.observable();
+                    _this.Network = ko.observable();
+                    _this.ProjectID = ko.observable();
+                    _this.Project = ko.observable();
+                    _this.RequestTypeID = ko.observable();
+                    _this.RequestType = ko.observable();
+                    _this.DataMartID = ko.observable();
+                    _this.DataMart = ko.observable();
+                    _this.IsLocal = ko.observable();
+                }
+                else {
+                    _this.MappingDefinitionID = ko.observable(CNDSSourceRequestTypeRoutingDTO.MappingDefinitionID);
+                    _this.NetworkID = ko.observable(CNDSSourceRequestTypeRoutingDTO.NetworkID);
+                    _this.Network = ko.observable(CNDSSourceRequestTypeRoutingDTO.Network);
+                    _this.ProjectID = ko.observable(CNDSSourceRequestTypeRoutingDTO.ProjectID);
+                    _this.Project = ko.observable(CNDSSourceRequestTypeRoutingDTO.Project);
+                    _this.RequestTypeID = ko.observable(CNDSSourceRequestTypeRoutingDTO.RequestTypeID);
+                    _this.RequestType = ko.observable(CNDSSourceRequestTypeRoutingDTO.RequestType);
+                    _this.DataMartID = ko.observable(CNDSSourceRequestTypeRoutingDTO.DataMartID);
+                    _this.DataMart = ko.observable(CNDSSourceRequestTypeRoutingDTO.DataMart);
+                    _this.IsLocal = ko.observable(CNDSSourceRequestTypeRoutingDTO.IsLocal);
+                }
+                return _this;
+            }
+            CNDSSourceRequestTypeRoutingViewModel.prototype.toData = function () {
+                return {
+                    MappingDefinitionID: this.MappingDefinitionID(),
+                    NetworkID: this.NetworkID(),
+                    Network: this.Network(),
+                    ProjectID: this.ProjectID(),
+                    Project: this.Project(),
+                    RequestTypeID: this.RequestTypeID(),
+                    RequestType: this.RequestType(),
+                    DataMartID: this.DataMartID(),
+                    DataMart: this.DataMart(),
+                    IsLocal: this.IsLocal(),
+                };
+            };
+            return CNDSSourceRequestTypeRoutingViewModel;
+        }(ViewModel));
+        ViewModels.CNDSSourceRequestTypeRoutingViewModel = CNDSSourceRequestTypeRoutingViewModel;
         var CNDSMappingItemViewModel = (function (_super) {
             __extends(CNDSMappingItemViewModel, _super);
             function CNDSMappingItemViewModel(CNDSMappingItemDTO) {

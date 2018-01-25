@@ -46,15 +46,16 @@ var Users;
         return deferred;
     }
     Users.GetSetting = GetSetting;
-    function SetSetting(Key, setting) {
-        if (setting === Global.Session(Key)) {
+    function SetSetting(key, setting) {
+        var sessionStorageValue = Global.Session(key);
+        if (sessionStorageValue != null && setting === sessionStorageValue) {
             var deferred = $.Deferred();
             deferred.resolve();
             return deferred;
         }
-        Global.Session(Key, setting);
+        Global.Session(key, setting);
         return Dns.WebApi.Users.SaveSetting({
-            Key: Key,
+            Key: key,
             UserID: User.ID,
             Setting: setting
         });

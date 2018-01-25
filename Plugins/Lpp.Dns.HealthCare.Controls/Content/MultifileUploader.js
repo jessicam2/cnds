@@ -1,32 +1,37 @@
 /// <reference path="../../../lpp.dns.portal/js/_rootlayout.ts" />
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var Controls;
 (function (Controls) {
     var MultifileUploader;
     (function (MultifileUploader) {
         MultifileUploader.RequestFileList = null;
         var vm;
-        var ViewModel = (function (_super) {
+        var ViewModel = /** @class */ (function (_super) {
             __extends(ViewModel, _super);
             function ViewModel(requestFileList, requestID, bindingControl) {
-                _super.call(this, bindingControl);
-                this.sFtpRoot = new sFtpItem("/", "/", 0 /* Folder */);
-                this.RequestID = requestID;
-                this.RequestFileList = ko.observableArray($.map(requestFileList, function (item) { return new Existingfile(item); }));
-                this.RemovedFilesList = ko.observableArray();
-                this.sFtpAddress = ko.observable(Global.Session(User.ID + "sftpHost") || "");
-                this.sFtpPort = ko.observable(Global.Session(User.ID + "sftpPort") || 22);
-                this.sFtpLogin = ko.observable(Global.Session(User.ID + "sftpLogin") || "");
-                this.sFtpPassword = ko.observable(Global.Session(User.ID + "sftpPassword") || "");
-                this.sFtpConnected = ko.observable(false);
-                this.sFtpSelectedFiles = ko.observableArray();
-                this.sFtpCurrentPath = ko.observable(this.sFtpRoot);
-                this.sFtpFolders = ko.observableArray([this.sFtpRoot]);
+                var _this = _super.call(this, bindingControl) || this;
+                _this.sFtpRoot = new sFtpItem("/", "/", ItemTypes.Folder);
+                _this.RequestID = requestID;
+                _this.RequestFileList = ko.observableArray($.map(requestFileList, function (item) { return new Existingfile(item); }));
+                _this.RemovedFilesList = ko.observableArray();
+                _this.sFtpAddress = ko.observable(Global.Session(User.ID + "sftpHost") || "");
+                _this.sFtpPort = ko.observable(Global.Session(User.ID + "sftpPort") || 22);
+                _this.sFtpLogin = ko.observable(Global.Session(User.ID + "sftpLogin") || "");
+                _this.sFtpPassword = ko.observable(Global.Session(User.ID + "sftpPassword") || "");
+                _this.sFtpConnected = ko.observable(false);
+                _this.sFtpSelectedFiles = ko.observableArray();
+                _this.sFtpCurrentPath = ko.observable(_this.sFtpRoot);
+                _this.sFtpFolders = ko.observableArray([_this.sFtpRoot]);
+                return _this;
             }
             ViewModel.prototype.RemoveFile = function (uploadedFileModel) {
                 vm.RequestFileList.remove(uploadedFileModel);
@@ -34,7 +39,10 @@ var Controls;
                 $('form.trackChanges').formChanged(true);
             };
             ViewModel.prototype.sFTPConnect = function (data, event) {
-                if (data.sFtpAddress() == '' || data.sFtpLogin() == '' || data.sFtpPassword() == '' || data.sFtpPort() == null || data.sFtpPort() == 0) {
+                if (data.sFtpAddress() == '' ||
+                    data.sFtpLogin() == '' ||
+                    data.sFtpPassword() == '' ||
+                    data.sFtpPort() == null || data.sFtpPort() == 0) {
                     Global.Helpers.ShowAlert("Validation Error", "<p>Please enter valid credentials before continuing.</p>");
                     return;
                 }
@@ -99,9 +107,7 @@ var Controls;
                     })
                 }).done(function (result) {
                     result.forEach(function (item) {
-                        var f = ko.utils.arrayFirst(result, function (i) {
-                            return i.FileName == item;
-                        });
+                        var f = ko.utils.arrayFirst(result, function (i) { return i.FileName == item; });
                         if (!f)
                             f = { FileName: item.FileName, ID: item.ID, MimeType: item.MimeType, Size: item.Size };
                         data.RequestFileList.push(new Existingfile({ FileName: f.FileName, Size: f.Size, ID: f.ID, MimeType: f.MimeType }));
@@ -145,7 +151,7 @@ var Controls;
                 });
             };
             return ViewModel;
-        })(Global.PageViewModel);
+        }(Global.PageViewModel));
         MultifileUploader.ViewModel = ViewModel;
         function init(requestFileList, requestID) {
             var bindingControl = $('#fileUpload');
@@ -153,12 +159,12 @@ var Controls;
             ko.applyBindings(vm, bindingControl[0]);
         }
         MultifileUploader.init = init;
+        var ItemTypes;
         (function (ItemTypes) {
             ItemTypes[ItemTypes["Folder"] = 0] = "Folder";
             ItemTypes[ItemTypes["File"] = 1] = "File";
-        })(MultifileUploader.ItemTypes || (MultifileUploader.ItemTypes = {}));
-        var ItemTypes = MultifileUploader.ItemTypes;
-        var sFtpFileResults = (function () {
+        })(ItemTypes = MultifileUploader.ItemTypes || (MultifileUploader.ItemTypes = {}));
+        var sFtpFileResults = /** @class */ (function () {
             function sFtpFileResults() {
                 this.Results = ko.observableArray();
             }
@@ -168,17 +174,17 @@ var Controls;
                 });
             };
             return sFtpFileResults;
-        })();
+        }());
         MultifileUploader.sFtpFileResults = sFtpFileResults;
-        var sFtpResult = (function () {
+        var sFtpResult = /** @class */ (function () {
             function sFtpResult(path, status) {
                 this.Path = ko.observable(path);
                 this.Status = ko.observable(status);
             }
             return sFtpResult;
-        })();
+        }());
         MultifileUploader.sFtpResult = sFtpResult;
-        var sFtpItem = (function () {
+        var sFtpItem = /** @class */ (function () {
             function sFtpItem(name, path, type) {
                 var _this = this;
                 this.Name = ko.observable(name);
@@ -191,7 +197,7 @@ var Controls;
                     if (_this.Items == null || _this.Items().length == 0)
                         return [];
                     var arr = ko.utils.arrayFilter(_this.Items(), function (item) {
-                        return item.Type() == 1 /* File */;
+                        return item.Type() == ItemTypes.File;
                     });
                     return arr;
                 });
@@ -200,16 +206,16 @@ var Controls;
                         return [];
                     var arr = [];
                     _this.Items().forEach(function (item) {
-                        if (item.Type() == 0 /* Folder */)
+                        if (item.Type() == ItemTypes.Folder)
                             arr.push(item);
                     });
                     return arr;
                 });
             }
             return sFtpItem;
-        })();
+        }());
         MultifileUploader.sFtpItem = sFtpItem;
-        var Existingfile = (function () {
+        var Existingfile = /** @class */ (function () {
             function Existingfile(file) {
                 var _this = this;
                 this.kilobyte = 1024;
@@ -236,7 +242,7 @@ var Controls;
                 });
             }
             return Existingfile;
-        })();
+        }());
         MultifileUploader.Existingfile = Existingfile;
     })(MultifileUploader = Controls.MultifileUploader || (Controls.MultifileUploader = {}));
 })(Controls || (Controls = {}));

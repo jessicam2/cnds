@@ -46,6 +46,7 @@
     </Compile>
     <Compile Include="DataSource\DataSourceDTO.cs" />
     <Compile Include="DataSource\DataSourceExtendedDTO.cs" />
+    <Compile Include="Networks\NetworkEntityDTO.cs" />
     <Compile Include="Search\OrganizationSearchDTO.cs" />
     <Compile Include="Search\DataSourceSearchDTO.cs" />
     <Compile Include="DataSource\DataSourceTransferDTO.cs" />

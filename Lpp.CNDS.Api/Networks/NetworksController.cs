@@ -117,8 +117,19 @@ namespace Lpp.CNDS.Api.Networks
         [HttpGet]
         public HttpResponseMessage LookupEntities(Guid networkID, [FromUri]IEnumerable<Guid> entityIDs)
         {
-            var et = DataContext.NetworkEntities.Where(ne => ne.NetworkID == networkID && entityIDs.Contains(ne.NetworkEntityID)).Select(ne => new { EntityID = ne.ID, NetworkEntityID = ne.NetworkEntityID }).ToArray();
+            var et = DataContext.NetworkEntities.Where(ne => ne.NetworkID == networkID && (entityIDs.Contains(ne.NetworkEntityID) || entityIDs.Contains(ne.ID))).Select(ne => new { EntityID = ne.ID, NetworkEntityID = ne.NetworkEntityID }).ToArray();
             return Request.CreateResponse(et);
+        }
+
+        public IQueryable<NetworkEntityDTO> ListNetworkEntities()
+        {
+            var result = DataContext.NetworkEntities.Where(ne =>
+                    DataContext.DataSources.Where(ds => ne.ID == ds.ID && ds.Deleted == false).Any() ||
+                    DataContext.Organizations.Where(org => ne.ID == org.ID && org.Deleted == false).Any() ||
+                    DataContext.Users.Where(user => user.ID == ne.ID && user.Deleted == false).Any()
+                );
+
+            return result.Map<NetworkEntity, NetworkEntityDTO>();
         }
     }
 }

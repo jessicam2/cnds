@@ -1,8 +1,13 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 /// <reference path="../../../../js/_layout.ts" />
 var CNDS;
 (function (CNDS) {
@@ -48,6 +53,7 @@ var CNDS;
                         self.RootDomains.push(new DomainViewModel(item));
                         self.ChildDomains.push(new DomainViewModel(item));
                     });
+                    ViewModel.RecursivlySortDS(self.RootDomains);
                     self.OrganizationDomainUseDataSource = ko.observableArray([]);
                     self.UserDomainUseDataSource = ko.observableArray([]);
                     self.DataSourceDomainUseDataSource = ko.observableArray([]);
@@ -64,14 +70,14 @@ var CNDS;
                                     domainUses.push(item);
                                 });
                             });
-                            ko.utils.arrayForEach(self.DataSourceDomainUseDataSource(), function (org) {
-                                var ds = org.toData();
+                            ko.utils.arrayForEach(self.DataSourceDomainUseDataSource(), function (datasource) {
+                                var ds = datasource.toData();
                                 ko.utils.arrayForEach(ds, function (item) {
                                     domainUses.push(item);
                                 });
                             });
-                            ko.utils.arrayForEach(self.UserDomainUseDataSource(), function (org) {
-                                var ds = org.toData();
+                            ko.utils.arrayForEach(self.UserDomainUseDataSource(), function (user) {
+                                var ds = user.toData();
                                 ko.utils.arrayForEach(ds, function (item) {
                                     domainUses.push(item);
                                 });
@@ -98,14 +104,15 @@ var CNDS;
                             var ds = ViewModel.RecusivelyLoadDS(d, dms, 2);
                             self.DataSourceDomainUseDataSource.push(ViewModel.MapToVieModel(ds, null));
                         });
+                        ViewModel.RecursivlySortDU(self.OrganizationDomainUseDataSource);
+                        ViewModel.RecursivlySortDU(self.UserDomainUseDataSource);
+                        ViewModel.RecursivlySortDU(self.DataSourceDomainUseDataSource);
                     });
                     self.onTabSelect = function (e) {
                         if (self.DomainChanged()) {
                             e.preventDefault();
                             Global.Helpers.ShowAlert("Domains have been Changed", "<p>You have added, deleted, or edited a domain.  Please Save your changes before Continuing onto another screen</p>");
                         }
-                        else
-                            return;
                     };
                     return _this;
                 }
@@ -179,6 +186,24 @@ var CNDS;
                     }
                     return returnDTO;
                 };
+                ViewModel.RecursivlySortDS = function (ds) {
+                    ds.sort(function (left, right) {
+                        return left.Title().toLowerCase() == right.Title().toLowerCase() ? 0 : (left.Title().toLowerCase() < right.Title().toLowerCase() ? -1 : 1);
+                    });
+                    ko.utils.arrayForEach(ds(), function (item) {
+                        if (item.ChildDomains().length > 0)
+                            ViewModel.RecursivlySortDS(item.ChildDomains);
+                    });
+                };
+                ViewModel.RecursivlySortDU = function (ds) {
+                    ds.sort(function (left, right) {
+                        return left.Title.toLowerCase() == right.Title.toLowerCase() ? 0 : (left.Title.toLowerCase() < right.Title.toLowerCase() ? -1 : 1);
+                    });
+                    ko.utils.arrayForEach(ds(), function (item) {
+                        if (item.SubDomainUses().length > 0)
+                            ViewModel.RecursivlySortDU(item.SubDomainUses);
+                    });
+                };
                 return ViewModel;
             }(Global.PageViewModel));
             Index.ViewModel = ViewModel;
@@ -203,13 +228,13 @@ var CNDS;
             var DomainViewModel = (function () {
                 function DomainViewModel(domain) {
                     var self = this;
-                    this.ID = domain.ID || Constants.Guid.newGuid();
-                    this.Title = ko.observable(domain.Title || '');
-                    this.DataType = ko.observable(domain.DataType || '');
-                    this.IsMultiValue = ko.observable(domain.IsMultiValue || false);
-                    this.ChildDomains = ko.observableArray([]);
-                    this.DomainUseID = domain.DomainUseID;
-                    this.EntityType = domain.EntityType;
+                    self.ID = domain.ID || Constants.Guid.newGuid();
+                    self.Title = ko.observable(domain.Title || '');
+                    self.DataType = ko.observable(domain.DataType || '');
+                    self.IsMultiValue = ko.observable(domain.IsMultiValue || false);
+                    self.ChildDomains = ko.observableArray([]);
+                    self.DomainUseID = domain.DomainUseID;
+                    self.EntityType = domain.EntityType;
                     if (domain.ChildMetadata != null && domain.ChildMetadata.length > 0) {
                         domain.ChildMetadata.forEach(function (item) {
                             self.ChildDomains.push(new DomainViewModel(item));
@@ -236,21 +261,22 @@ var CNDS;
                             }
                         }
                     });
-                    this.ViewTemplate = ko.pureComputed(function () { return self.DataType() + '-template'; });
-                    this.ViewExpanded = ko.observable(false);
+                    self.ViewTemplate = ko.pureComputed(function () { return self.DataType() + '-template'; });
+                    self.ViewExpanded = ko.observable(false);
                     self.ToggleView = function () { self.ViewExpanded(!self.ViewExpanded()); };
                     self.ViewToggleCss = ko.pureComputed(function () { return self.ViewExpanded() ? 'glyphicon-triangle-bottom' : 'glyphicon-triangle-right'; });
                     self.AvailableDataTypes = ko.pureComputed(function () {
-                        var dataTypes = [];
-                        dataTypes.push({ text: 'Group', value: 'group' });
-                        dataTypes.push({ text: 'String', value: 'string' });
-                        dataTypes.push({ text: 'Number', value: 'int' });
-                        dataTypes.push({ text: 'Yes/No | True/False', value: 'boolean' });
-                        dataTypes.push({ text: 'Reference', value: 'reference' });
-                        dataTypes.push({ text: 'Boolean Group', value: 'booleanGroup' });
+                        var dataTypes = [
+                            { text: 'Group', value: 'group' },
+                            { text: 'String', value: 'string' },
+                            { text: 'Number', value: 'int' },
+                            { text: 'Yes/No | True/False', value: 'boolean' },
+                            { text: 'Reference', value: 'reference' },
+                            { text: 'Boolean Group', value: 'booleanGroup' }
+                        ];
                         return dataTypes;
                     });
-                    this.DataTypeDisplay = ko.pureComputed(function () {
+                    self.DataTypeDisplay = ko.pureComputed(function () {
                         if (self.DataType().toLowerCase() == "boolean")
                             return "True | False";
                         else if (self.DataType().toLowerCase() == "int")
@@ -291,11 +317,10 @@ var CNDS;
                         EnumValue: null,
                         DataType: this.DataType(),
                         EntityType: null,
-                        //DomainUseID: null,
                         ParentDomainReferenceID: null,
                         Value: null,
                         ChildMetadata: this.ChildDomains() == null ? [] : this.ChildDomains().map(function (item) { return item.toData(); }),
-                        References: this.DomainReferences == null ? [] : this.DomainReferences().map(function (item) { return item.ToData(); }),
+                        References: this.DomainReferences() == null ? [] : this.DomainReferences().map(function (item) { return item.ToData(); }),
                         Visibility: 0
                     };
                 };
@@ -312,7 +337,7 @@ var CNDS;
                 }
                 DomainReferenceViewModel.prototype.ToData = function () {
                     return {
-                        ID: this.ID == null || this.ID == "" ? Constants.Guid.newGuid() : this.ID,
+                        ID: (this.ID == null || this.ID == "") ? Constants.Guid.newGuid() : this.ID,
                         Title: this.Title,
                         Description: this.Description,
                         DomainID: null,
@@ -336,7 +361,7 @@ var CNDS;
                     self.Enabled = ko.observable(domain.DomainUseID != null);
                     if (domain.DomainUseID != null)
                         self.CheckedForUse(true);
-                    self.SubDomainUses = [];
+                    self.SubDomainUses = ko.observableArray([]);
                     self.ParentDomainUse = parentDomain || null;
                     self.CheckedForUse.subscribe(function (val) {
                         if (self.enableCascadeToChild) {
@@ -344,12 +369,12 @@ var CNDS;
                                 if (self.ParentDomainUse != null) {
                                     self.ParentDomainUse.SetToTrue();
                                 }
-                                ko.utils.arrayForEach(self.SubDomainUses, function (child) {
+                                ko.utils.arrayForEach(self.SubDomainUses(), function (child) {
                                     child.CheckedForUse(true);
                                 });
                             }
                             else {
-                                ko.utils.arrayForEach(self.SubDomainUses, function (child) {
+                                ko.utils.arrayForEach(self.SubDomainUses(), function (child) {
                                     child.CheckedForUse(false);
                                 });
                             }
@@ -373,8 +398,8 @@ var CNDS;
                         EntityType: self.EntityType,
                         Checked: self.CheckedForUse()
                     });
-                    if (self.SubDomainUses.length > 0) {
-                        ko.utils.arrayForEach(self.SubDomainUses, function (item) {
+                    if (self.SubDomainUses().length > 0) {
+                        ko.utils.arrayForEach(self.SubDomainUses(), function (item) {
                             var childReturn = item.toData();
                             ko.utils.arrayForEach(childReturn, function (child) {
                                 returnDTO.push(child);

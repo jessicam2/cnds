@@ -57,15 +57,20 @@ namespace Lpp.Dns.Portal
             if (rd != null)
             {
                 var parts = rd.Url.Split(new[] { '?' }, 2);
-                var values = parts.Skip(1)
-                    .SelectMany(s => s.Split('&'))
-                    .Select(kv => kv.Split(new[] { '=' }, 2))
-                    .Where(kv => kv != null && kv.Length == 2 && !kv[0].NullOrEmpty())
-                    .ToDictionary(kv => kv[0], kv => (object)HttpUtility.UrlDecode(kv[1]));
+                Dictionary<string, object> values = new Dictionary<string, object>();
+                if (parts.Length > 1)
+                {
+                    values = new[] { parts[1] }
+                        .SelectMany(s => s.Split('&'))
+                        .Select(kv => kv.Split(new[] { '=' }, 2))
+                        .Where(kv => kv != null && kv.Length == 2 && !string.IsNullOrWhiteSpace(kv[0]))
+                        //need to group on the query string parameter key since there could be more than one pair with the same key when passing a collection via query string
+                        .GroupBy(kv => kv[0])
+                        .ToDictionary(kv => kv.Key, kv => (object)kv.Select(k => HttpUtility.UrlDecode(k[1])).ToArray());
+                }
                 a(values);
-
-                var qs = string.Join("&", values.Select(kv => kv.Key + "=" + HttpUtility.UrlEncode(kv.Value as string ?? "")));
-                filterContext.Result = new RedirectResult(parts.FirstOrDefault() + (qs.NullOrEmpty() ? "" : "?" + qs), rd.Permanent);
+                
+                filterContext.Result = new RedirectResult(parts.FirstOrDefault() + ((parts.Length < 2 || string.IsNullOrEmpty(parts[1])) ? "" : "?" + parts[1]), rd.Permanent);
             }
             else if (rt != null && (rt.RouteValues.ValueOrDefault(EmbeddedParam) as string).NullOrEmpty())
             {

@@ -78,6 +78,22 @@ namespace Lpp.Dns.Data
                     "DataContext.FilteredRequestListForEvent(@UserID, @DataMartID)", new ObjectParameter("UserID", userID), new ObjectParameter("DataMartID", dataMartID));
         }
 
+        [DbFunction("DataContext", "AclProjectsFiltered")]
+        public IQueryable<FilteredAcl> FilteredProjectAcls(Guid userID, Guid permissionID, Guid projectID)
+        {
+            return
+                ((IObjectContextAdapter)this).ObjectContext.CreateQuery<FilteredAcl>(
+                    "dbo.AclProjectsFiltered(@UserID, @PermissionID, @ProjectID)", new ObjectParameter("UserID", userID), new ObjectParameter("PermissionID", permissionID), new ObjectParameter("ProjectID", projectID));
+        }
+
+        [DbFunction("DataContext", "AclProjectOrganizationsFiltered")]
+        public IQueryable<FilteredAcl> FilteredProjectOrganizationAcls(Guid userID, Guid permissionID, Guid projectID, Guid organizationID)
+        {
+            return
+                ((IObjectContextAdapter)this).ObjectContext.CreateQuery<FilteredAcl>(
+                    "dbo.AclProjectOrganizationsFiltered(@UserID, @PermissionID, @ProjectID, @OrganizationID)", new ObjectParameter("UserID", userID), new ObjectParameter("PermissionID", permissionID), new ObjectParameter("ProjectID", projectID), new ObjectParameter("OrganizationID", organizationID));
+        }
+
         [DbFunction("DataContext", "RequestRelatedNotificationRecipients")]
         public IQueryable<User> RequestRelatedNotificationRecipients(Guid eventID, Guid requestID)
         {

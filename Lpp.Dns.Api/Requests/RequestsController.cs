@@ -109,23 +109,23 @@ namespace Lpp.Dns.Api.Requests
                 }
             }
 
-            var externalRoutes = details.Routes.Where(rt => rt.NetworkID != WebApiApplication.NetworkID || (rt.NetworkID == WebApiApplication.NetworkID && rt.ProjectID != details.Dto.RequestTypeID)).ToArray();
+            var externalRoutes = details.Routes.Where(rt => (rt.NetworkID != WebApiApplication.NetworkID || (rt.NetworkID == WebApiApplication.NetworkID && rt.ProjectID != details.Dto.RequestTypeID)) && rt.DefinitionID.HasValue).ToArray();
             if (externalRoutes.Any())
             {
                 //import the route as a DataMart if not already registered
                 var routeIDs = externalRoutes.Select(rt => rt.DefinitionID).Distinct().ToArray();
                 var existingDataMarts = await DataContext.DataMarts.Where(dm => routeIDs.Contains(dm.ID) && dm.DataMartTypeID == CNDSDataMartTypeID).Select(dm => dm.ID).ToArrayAsync();
 
-                var routesToRegister = externalRoutes.Where(rt => !existingDataMarts.Contains(rt.DefinitionID)).ToArray();
+                var routesToRegister = externalRoutes.Where(rt => !existingDataMarts.Contains(rt.DefinitionID.Value)).ToArray();
                 if (routesToRegister.Any())
                 {
                     //the route definition ID is going to be the ID of the local datamart object.
                     foreach(var route in routesToRegister)
                     {
                         DataContext.DataMarts.Add(new DataMart {
-                            ID = route.DefinitionID,
-                            Name = route.DefinitionID.ToString("D"),
-                            Acronym = route.DefinitionID.ToString("D"),
+                            ID = route.DefinitionID.Value,
+                            Name = route.DefinitionID.Value.ToString("D"),
+                            Acronym = route.DefinitionID.Value.ToString("D"),
                             OrganizationID = CNDSOrganizationRouteProxyID,
                             DataMartTypeID = CNDSDataMartTypeID
                         });
@@ -136,7 +136,7 @@ namespace Lpp.Dns.Api.Requests
                 foreach(var route in externalRoutes)
                 {
                     requestDataMarts.Add(new RequestDataMartDTO {
-                        DataMartID = route.DefinitionID,
+                        DataMartID = route.DefinitionID.Value,
                         RoutingType = RoutingType.SourceCNDS,
                         DueDate = requestDueDate,
                         Priority = details.Dto.Priority

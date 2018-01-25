@@ -15,6 +15,7 @@
     <NuGetPackageImportStamp>a863826b</NuGetPackageImportStamp>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Threading.Tasks">
@@ -120,13 +121,9 @@
     </Compile>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Scripts\typings\jquery.form\jquery.form.d.ts" />
-    <Content Include="Scripts\typings\linq\linq.3.0.3-Beta4.d.ts" />
-    <Content Include="Scripts\typings\linq\linq.d.ts" />
-    <Content Include="Scripts\typings\linq\linq.jquery.d.ts" />
-    <Content Include="Scripts\typings\rx.js\rx.js.time.d.ts" />
     <Content Include="utilities.d.ts" />
   </ItemGroup>
   <ItemGroup>
@@ -150,12 +147,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <TypeScriptCompile Include="Scripts\typings\knockout.mapping\knockout.mapping.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\knockout.validation\knockout.validation.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\knockout\knockout.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\moment\moment.d.ts" />
   </ItemGroup>
   <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

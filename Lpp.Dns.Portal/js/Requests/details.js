@@ -1,8 +1,13 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 /// <reference path="../_rootlayout.ts" />
 var Requests;
 (function (Requests) {
@@ -642,7 +647,9 @@ var Requests;
                         request = new Dns.ViewModels.RequestViewModel(requests[0]);
                         var projectID = request.ProjectID();
                         var parentRequestID = requests[0].ParentRequestID;
-                        $.when(parentRequestID == null ? [] : Dns.WebApi.Requests.Get(parentRequestID), Dns.WebApi.Requests.RequestDataMarts(request.ID()), Dns.WebApi.RequestTypes.Get(request.RequestTypeID()), Dns.WebApi.Workflow.GetWorkflowActivity(request.CurrentWorkFlowActivityID()), Dns.WebApi.Projects.GetActivityTreeByProjectID(request.ProjectID()), Dns.WebApi.RequestUsers.List('RequestID eq ' + id), Dns.WebApi.Projects.GetFieldOptions(projectID, User.ID), Dns.WebApi.Projects.GetPermissions([request.ProjectID()], [Permissions.Request.AssignRequestLevelNotifications, Permissions.Project.EditRequestID, Permissions.Request.OverrideDataMartRoutingStatus, Permissions.Request.ApproveRejectResponse, Permissions.Request.ChangeRoutingsAfterSubmission, Permissions.Project.ResubmitRequests]), Dns.WebApi.Organizations.GetPermissions([request.OrganizationID()], [Permissions.Request.AssignRequestLevelNotifications, Permissions.Request.ChangeRoutingsAfterSubmission]), Dns.WebApi.Response.GetResponseGroupsByRequestID(request.ID()), Dns.WebApi.Response.CanViewResponses(request.ID())).done(function (parentRequests, requestDataMarts, requestTypes, workflowActivities, activityTree, requestUsers, fieldOptions, projPermissions, reqTypePermissions, responseGroups, canViewResponses) {
+                        $.when(parentRequestID == null ? [] : Dns.WebApi.Requests.Get(parentRequestID), Dns.WebApi.Requests.RequestDataMarts(request.ID()), Dns.WebApi.RequestTypes.Get(request.RequestTypeID()), Dns.WebApi.Workflow.GetWorkflowActivity(request.CurrentWorkFlowActivityID()), Dns.WebApi.Projects.GetActivityTreeByProjectID(request.ProjectID()), Dns.WebApi.RequestUsers.List('RequestID eq ' + id), Dns.WebApi.Projects.GetFieldOptions(projectID, User.ID), Dns.WebApi.Projects.GetPermissions([request.ProjectID()], [Permissions.Request.AssignRequestLevelNotifications, Permissions.Project.EditRequestID, Permissions.Request.OverrideDataMartRoutingStatus, Permissions.Request.ApproveRejectResponse, Permissions.Request.ChangeRoutingsAfterSubmission, Permissions.Project.ResubmitRequests]), Dns.WebApi.Organizations.GetPermissions([request.OrganizationID()], [Permissions.Request.AssignRequestLevelNotifications, Permissions.Request.ChangeRoutingsAfterSubmission]), Dns.WebApi.Response.GetResponseGroupsByRequestID(request.ID()), Dns.WebApi.Response.CanViewResponses(request.ID())
+                        //Get the work flow activity that it's on
+                        ).done(function (parentRequests, requestDataMarts, requestTypes, workflowActivities, activityTree, requestUsers, fieldOptions, projPermissions, reqTypePermissions, responseGroups, canViewResponses) {
                             if (parentRequests.length != 0) {
                                 parentRequest = new Dns.ViewModels.RequestViewModel(parentRequests[0]);
                             }

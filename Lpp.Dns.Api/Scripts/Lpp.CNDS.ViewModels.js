@@ -1,8 +1,13 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var CNDS;
 (function (CNDS) {
     var ViewModels;
@@ -1222,6 +1227,41 @@ var CNDS;
             return UserWithDomainDataItemViewModel;
         }(EntityWithDomainDataItemViewModel));
         ViewModels.UserWithDomainDataItemViewModel = UserWithDomainDataItemViewModel;
+        var NetworkEntityViewModel = (function (_super) {
+            __extends(NetworkEntityViewModel, _super);
+            function NetworkEntityViewModel(NetworkEntityDTO) {
+                var _this = _super.call(this) || this;
+                if (NetworkEntityDTO == null) {
+                    _this.NetworkID = ko.observable();
+                    _this.Network = ko.observable();
+                    _this.EntityType = ko.observable();
+                    _this.NetworkEntityID = ko.observable();
+                    _this.ID = ko.observable();
+                    _this.Timestamp = ko.observable();
+                }
+                else {
+                    _this.NetworkID = ko.observable(NetworkEntityDTO.NetworkID);
+                    _this.Network = ko.observable(NetworkEntityDTO.Network);
+                    _this.EntityType = ko.observable(NetworkEntityDTO.EntityType);
+                    _this.NetworkEntityID = ko.observable(NetworkEntityDTO.NetworkEntityID);
+                    _this.ID = ko.observable(NetworkEntityDTO.ID);
+                    _this.Timestamp = ko.observable(NetworkEntityDTO.Timestamp);
+                }
+                return _this;
+            }
+            NetworkEntityViewModel.prototype.toData = function () {
+                return {
+                    NetworkID: this.NetworkID(),
+                    Network: this.Network(),
+                    EntityType: this.EntityType(),
+                    NetworkEntityID: this.NetworkEntityID(),
+                    ID: this.ID(),
+                    Timestamp: this.Timestamp(),
+                };
+            };
+            return NetworkEntityViewModel;
+        }(EntityDtoWithIDViewModel));
+        ViewModels.NetworkEntityViewModel = NetworkEntityViewModel;
         var NetworkViewModel = (function (_super) {
             __extends(NetworkViewModel, _super);
             function NetworkViewModel(NetworkDTO) {

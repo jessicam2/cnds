@@ -1,4 +1,9 @@
-﻿var Acl;
+/// <reference path="../../../Lpp.Pmn.Resources/Scripts/typings/jquery/jquery.d.ts" />
+/// <reference path="../../../Lpp.Pmn.Resources/Scripts/typings/jqueryui/jqueryui.d.ts" />
+/// <reference path="../../../Lpp.Pmn.Resources/Scripts/typings/requirejs/require.d.ts" />
+/// <reference path="../../Lpp.Mvc.Controls.Interfaces/utilities.d.ts" />
+/// <reference path="acl.d.ts" />
+var Acl;
 (function (Acl) {
     define(['jQuery', 'lpp.mvc.controls/utilities'], function ($) {
         return function (acl, viewId, subjectSelector, noRecordsMessage, privilegeEditors) {
@@ -7,29 +12,23 @@
                 var root = $(viewId);
                 var subjectsGrid = $(".Grid.Subjects", root);
                 var privsBox = $(".PrivilegesBox", root);
-                function subjectsRows() {
-                    return $(".Grid.Subjects > tbody > tr", root);
-                }
-
+                function subjectsRows() { return $(".Grid.Subjects > tbody > tr", root); }
                 function updateHiddenField() {
                     var newValue = $.map(acl, function (pp, subjectId) {
                         return $.map(pp.own, function (allow, privilegeId) {
-                            return (allow === null || allow === undefined) ? undefined : (subjectId + ':' + privilegeId + ':' + (allow ? "allow" : "deny"));
+                            return (allow === null || allow === undefined) ? undefined :
+                                (subjectId + ':' + privilegeId + ':' + (allow ? "allow" : "deny"));
                         });
                     }).join();
                     $("input.ValueField", root).val(newValue).trigger("change");
                 }
-
                 $.each(privilegeEditors, function () {
-                    var _this = this;
                     var e = this;
                     e.onChange(function () {
                         var subj = currentSubject();
                         if (!subj)
                             return;
-
                         $.extend(subj.own, e.getPrivileges());
-
                         $.each(privilegeEditors, function () {
                             var e1 = this;
                             if (e != e1)
@@ -38,12 +37,10 @@
                         updateHiddenField();
                     });
                 });
-
                 var _currentSubject;
                 function currentSubject(subj) {
                     if (subj === undefined)
                         return _currentSubject;
-
                     _currentSubject = subj;
                     if (subj) {
                         privsBox.show();
@@ -51,33 +48,27 @@
                             var e = this;
                             e.setPrivileges(subj.own, subj.inherited);
                         });
-                    } else {
+                    }
+                    else {
                         privsBox.hide();
                     }
                 }
-
                 function subjIdFromRow(row) {
                     return row.find("a.Remove").data("id");
                 }
-
                 root.delegate(".Subject", "click", function () {
                     var row = $(this).closest("tr");
                     var subjId = subjIdFromRow(row);
                     if (!subjId)
                         return;
-
                     currentSubject(acl[subjId]);
                     subjectsRows().removeClass("Selected");
                     row.addClass("Selected");
                 });
-
                 $(".Subjects .Add", root).click(function () {
                     subjectSelector.selectSubject(function (subjs) {
                         var rows = subjectsRows();
-                        rows.filter(function () {
-                            return !subjIdFromRow($(this));
-                        }).remove();
-
+                        rows.filter(function () { return !subjIdFromRow($(this)); }).remove();
                         var lastAdded;
                         $.each(subjs, function () {
                             var existing = rows.filter("[data-id=" + this.Id + "]");
@@ -86,42 +77,41 @@
                                 return;
                             }
                             acl[this.Id] = { own: {}, inherited: {} };
-                            subjectsGrid.children("tbody").append(lastAdded = $("<tr>").append('<td><a class="Remove" href="#" data-id="' + this.Id + '">[remove]</a></td>').append($('<td class="Subject">').html(this.Name).attr("sort-value", this.Name)));
+                            subjectsGrid.children("tbody").append(lastAdded =
+                                $("<tr>")
+                                    .append('<td><a class="Remove" href="#" data-id="' + this.Id + '">[remove]</a></td>')
+                                    .append($('<td class="Subject">').html(this.Name).attr("sort-value", this.Name)));
                         });
-
                         subjectsRows().alternateClasses("", "Alt");
                         if (lastAdded)
                             lastAdded.find(".Subject").click();
                     });
                     return false;
                 });
-
                 root.delegate(".Subjects .Remove", "click", function () {
                     var row = $(this).closest("tr");
                     var subjId = subjIdFromRow(row);
                     row.remove();
-
                     delete acl[subjId];
                     updateHiddenField();
-
                     var rows = subjectsRows();
                     if (rows.length == 0) {
                         subjectsGrid.children("tbody").append($("<tr><td colspan=2>").html(noRecordsMessage || "No access control records found"));
-                    } else {
+                    }
+                    else {
                         rows.alternateClasses("", "Alt");
                     }
-
                     var firstSubject = $("tbody > tr > td.Subject", root).first();
                     if (firstSubject.length)
-                        firstSubject.click(); else
+                        firstSubject.click();
+                    else
                         currentSubject(null);
                     return false;
                 });
-
                 privsBox.hide();
                 $("tbody > tr > td.Subject", root).first().click();
             });
         };
     });
 })(Acl || (Acl = {}));
-//@ sourceMappingURL=acl.js.map
+//# sourceMappingURL=acl.js.map

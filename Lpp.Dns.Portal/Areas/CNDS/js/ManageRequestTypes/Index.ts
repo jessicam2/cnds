@@ -156,7 +156,7 @@ module CNDS.ManageRequestTypes.Index {
                 if (result) {
                     this.SelectedMappings([]);
                     $('#gMappings').data('kendoGrid').clearSelection();
-                    this.RequestTypeMappings.fetch();
+                    this.RequestTypeMappings.read();
                 }
 
                 window.location.reload();
@@ -179,7 +179,7 @@ module CNDS.ManageRequestTypes.Index {
             });
             Global.Helpers.ShowDialog('Edit RequestType Mapping Definition', '/cnds/managerequesttypes/editmapping', [], 850, 750, { ID: selectedMapping.ID, Routes: routes }).done((result) => {
                 if (result) {
-                    this.RequestTypeMappings.fetch();
+                    this.RequestTypeMappings.read();
                 }
             });
         }
@@ -229,7 +229,7 @@ module CNDS.ManageRequestTypes.Index {
                 if (result) {
                     this.SelectedRouteDefinitions([]);
                     $('#gDefinitions').data('kendoGrid').clearSelection();
-                    this.RouteDefinitions.fetch();
+                    this.RouteDefinitions.read();
                 }
                 window.location.reload();
             });
@@ -240,7 +240,7 @@ module CNDS.ManageRequestTypes.Index {
             
             Global.Helpers.ShowDialog('Edit RequestType Route Definition', '/cnds/managerequesttypes/editdefinition', [], 750, 450, { ID: selectedDefinition.ID }).done((result) => {
                 if (result) {
-                    this.RouteDefinitions.fetch();
+                    this.RouteDefinitions.read();
                 }
             });
         }

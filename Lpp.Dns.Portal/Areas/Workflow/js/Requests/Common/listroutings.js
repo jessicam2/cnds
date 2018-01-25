@@ -1,9 +1,14 @@
 /// <reference path="../../../../../js/requests/details.ts" />
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var Workflow;
 (function (Workflow) {
     var Common;
@@ -338,27 +343,32 @@ var Workflow;
                         });
                     };
                     self.onComplete = function () {
-                        Dns.WebApi.Requests.CompleteActivity({
-                            DemandActivityResultID: 'E1C90001-B582-4180-9A71-A3B600EA0C27',
-                            Dto: Requests.Details.rovm.Request.toData(),
-                            DataMarts: self.Routings(),
-                            Data: null,
-                            Comment: null
-                        }).done(function (results) {
-                            //force a reload of the page
-                            window.location.href = "/requests/details?ID=" + Requests.Details.rovm.Request.ID();
+                        //show confirmation dialog to complete the workflow
+                        Global.Helpers.ShowConfirm("Please Confirm", '<p style="text-align:center">This will complete the workflow for the current request.<br/> Do you wish to continue?</p>').done(function () {
+                            Dns.WebApi.Requests.CompleteActivity({
+                                DemandActivityResultID: 'E1C90001-B582-4180-9A71-A3B600EA0C27',
+                                Dto: Requests.Details.rovm.Request.toData(),
+                                DataMarts: self.Routings(),
+                                Data: null,
+                                Comment: null
+                            }).done(function (results) {
+                                //force a reload of the page
+                                window.location.href = "/requests/details?ID=" + Requests.Details.rovm.Request.ID();
+                            });
                         });
                     };
                     self.onCompleteWorkflow = function () {
-                        Dns.WebApi.Requests.CompleteActivity({
-                            DemandActivityResultID: 'E93CED3B-4B55-4991-AF84-07058ABE315C',
-                            Dto: Requests.Details.rovm.Request.toData(),
-                            DataMarts: self.Routings(),
-                            Data: null,
-                            Comment: null
-                        }).done(function (results) {
-                            //force a reload of the page
-                            window.location.href = "/requests/details?ID=" + Requests.Details.rovm.Request.ID();
+                        Global.Helpers.ShowConfirm("Please Confirm", '<p style="text-align:center">This will complete the workflow for the current request.<br/> Do you wish to continue?</p>').done(function () {
+                            Dns.WebApi.Requests.CompleteActivity({
+                                DemandActivityResultID: 'E93CED3B-4B55-4991-AF84-07058ABE315C',
+                                Dto: Requests.Details.rovm.Request.toData(),
+                                DataMarts: self.Routings(),
+                                Data: null,
+                                Comment: null
+                            }).done(function (results) {
+                                //force a reload of the page
+                                window.location.href = "/requests/details?ID=" + Requests.Details.rovm.Request.ID();
+                            });
                         });
                     };
                     self.onGroupResponses = function () {

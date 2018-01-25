@@ -144,7 +144,7 @@ module Controls.WFFileUpload.ForTask {
 
         public BatchFileUpload(): JQueryDeferred<boolean> {
             var self = this;
-            var deferred = $.Deferred();
+            var deferred = $.Deferred<boolean>();
             if (self.CurrentTask != null) {
                 var kendoUploadButton = $(".k-upload-selected");
                 kendoUploadButton.click();

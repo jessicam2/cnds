@@ -108,11 +108,36 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   
-  <Import Project="..\..\packages\MSBuild.Extension.Pack.1.8.0\build\net40\MSBuild.Extension.Pack.targets" Condition="Exists('..\..\packages\MSBuild.Extension.Pack.1.8.0\build\net40\MSBuild.Extension.Pack.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\MSBuild.Extension.Pack.1.8.0\build\net40\MSBuild.Extension.Pack.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\MSBuild.Extension.Pack.1.8.0\build\net40\MSBuild.Extension.Pack.targets'))" />
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      
+      <PluginFiles Include="$(OutputPath)*.dll;$(OutputPath)*.pdb;$(OutputPath)*.xml">
+        <InProject>false</InProject>
+      </PluginFiles>
+    </ItemGroup>
+    
+    <Copy SkipUnchangedFiles="false" OverwriteReadOnlyFiles="true" SourceFiles="@(PluginFiles)" DestinationFolder="$(SolutionDir)Lpp.Adapters\Lpp.Wbd.AdapterService\$(OutputPath)Plugins" />
+    
   </Target>
+  <Target Name="CreateVersionedZip" AfterTargets="AfterBuild">
+    <MSBuild.ExtensionPack.Framework.Assembly TaskAction="GetInfo" NetAssembly="$(OutputPath)$(AssemblyName).dll">
+      <Output TaskParameter="OutputItems" ItemName="Info" />
+    </MSBuild.ExtensionPack.Framework.Assembly>
+    <ItemGroup>
+      
+      <dlls Include="$(OutputPath)Lpp.*.dll;">
+        <InProject>false</InProject>
+      </dlls>
+    </ItemGroup>
+    <PropertyGroup>
+      <PackageIdentifier>Lpp.Dns.DataMart.Model.Metadata</PackageIdentifier>
+      <PackageFileName>$(PackageIdentifier).%(Info.FileVersion).zip</PackageFileName>
+      <PackageDeployPath Condition=" '$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">$(SolutionDir)Lpp.Dns.Api\App_Data\</PackageDeployPath>
+      
+      <PackageDeployPath Condition=" '$(Configuration)' == 'Adapters'">C:\Checkouts\Plugins\</PackageDeployPath>
+    </PropertyGroup>
+    <MSBuild.ExtensionPack.Compression.Zip Condition=" '$(Configuration)' == 'Debug'" TaskAction="Create" CompressFiles="@(PluginFiles)" CompressionLevel="BestCompression" RemoveRoot="$(OutputPath)" ZipFileName="$(PackageDeployPath)$(PackageFileName)" />
+  </Target>
+  <Import Project="..\..\packages\MSBuild.Extension.Pack.1.8.0\build\net40\MSBuild.Extension.Pack.targets" Condition="Exists('..\..\packages\MSBuild.Extension.Pack.1.8.0\build\net40\MSBuild.Extension.Pack.targets')" />
+  
 </Project>

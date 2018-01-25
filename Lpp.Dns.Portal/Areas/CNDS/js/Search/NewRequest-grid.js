@@ -27,12 +27,6 @@ var CNDS;
                         }
                         return "";
                     });
-                    self.SelectedRequestTypeRoutes = ko.pureComputed(function () {
-                        if (self.SelectedRequestTypeDetails() != null) {
-                            return self.SelectedRequestTypeDetails().Routes;
-                        }
-                        return [];
-                    });
                     self.dsDataSources = new kendo.data.DataSource({
                         data: [],
                         schema: {
@@ -45,6 +39,10 @@ var CNDS;
                         ]
                     });
                     var ids = $.url().param("id");
+                    if (Array.isArray(ids) == false) {
+                        //if only one id is specified the result is only a string, need to convert to an array.
+                        ids = [ids];
+                    }
                     var idFilter = ids.map(function (id) { return "ID eq " + id; }).join(' or ');
                     Dns.WebApi.CNDSSearch.DataSources(idFilter).done(function (datasources) {
                         self.dsDataSources.data(datasources);
@@ -74,6 +72,18 @@ var CNDS;
                                     $("#" + item).click();
                                 });
                             }
+                        },
+                        columnMenuInit: function (e) {
+                            var menu = e.container.find(".k-menu").data("kendoMenu");
+                            menu.bind("close", function () {
+                                try {
+                                    Users.SetSetting("CNDS.Search.DataSources.gDataSources.User:" + User.ID, Global.Helpers.GetGridSettings(grid));
+                                }
+                                catch (ex) {
+                                    //ignore the error
+                                }
+                                ;
+                            });
                         }
                     }).data("kendoGrid");
                     grid.table.on('click', '.checkbox', function (data) {
@@ -97,6 +107,13 @@ var CNDS;
                         else {
                             row.removeClass("k-state-selected");
                         }
+                        var headerCheckbox = $('.header-checkbox');
+                        if (self.NumberOfSelectedDataSources() > 0) {
+                            headerCheckbox.prop('checked', true);
+                        }
+                        else {
+                            headerCheckbox.removeProp('checked');
+                        }
                     });
                     grid.thead.on('click', '.header-checkbox', function (data) {
                         var checked = data.target.checked;
@@ -119,19 +136,6 @@ var CNDS;
                         }
                         self.SelectedDataSources = items;
                         self.NumberOfSelectedDataSources(Object.keys(self.SelectedDataSources).length);
-                    });
-                    self.FilterQEDataSources = ko.observable(false);
-                    self.FilterQEDataSources.subscribe(function (value) {
-                        if (value) {
-                            self.dsDataSources.filter({ field: 'AdapterSupported', operator: 'neq', value: '' });
-                        }
-                        else {
-                            self.dsDataSources.filter([]);
-                        }
-                        //reset the selected rows, and select all header checkbox
-                        self.SelectedDataSources = {};
-                        self.NumberOfSelectedDataSources(0);
-                        grid.thead.find('.header-checkbox').prop('checked', false);
                     });
                     self.onSelectRequestType = function () {
                         var selected = [];
@@ -160,11 +164,12 @@ var CNDS;
                                     return;
                                 }
                                 Global.Helpers.ShowExecuting();
+                                var routes = (self.SelectedRequestTypeDetails().LocalRoutes || []).concat((self.SelectedRequestTypeDetails().ExternalRoutes || [])).map(function (rt) { return ({ DefinitionID: rt.MappingDefinitionID, NetworkID: rt.NetworkID, Network: rt.Network, ProjectID: rt.ProjectID, Project: rt.Project, DataMartID: rt.DataMartID, DataMart: rt.DataMart, RequestTypeID: rt.RequestTypeID, RequestType: rt.RequestType }); });
                                 //save the request, navigate to the request details page                        
                                 Dns.WebApi.Requests.CreateRequest({
                                     Comment: null,
                                     Data: null,
-                                    Routes: self.SelectedRequestTypeDetails().Routes,
+                                    Routes: routes,
                                     DemandActivityResultID: null,
                                     Dto: request
                                 }).done(function (res) {
@@ -183,18 +188,11 @@ var CNDS;
                         vm = new ViewModel();
                         var bindingControl = $('#Content');
                         ko.applyBindings(vm, bindingControl[0]);
-                        $(window).unload(function () {
-                            try {
-                                Users.SetSetting("CNDS.Search.DataSources.gDataSources.User:" + User.ID, Global.Helpers.GetGridSettings($("#gDataSources").data("kendoGrid")));
-                            }
-                            catch (ex) {
-                            }
-                            ;
-                        });
                         try {
                             Global.Helpers.SetGridFromSettings($("#gDataSources").data("kendoGrid"), gridDataSourcesSettings);
                         }
                         catch (ex) {
+                            //ignore the error
                         }
                         ;
                     });

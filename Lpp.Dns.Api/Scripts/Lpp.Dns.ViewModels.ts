@@ -1,4 +1,4 @@
-/// <reference path='../../Lpp.Pmn.Resources/Scripts/typings/knockout.mapping/knockout.mapping.d.ts' />
+/// <reference path='../../Lpp.Pmn.Resources/node_modules/@types/knockout.mapping/index.d.ts' />
 /// <reference path='Lpp.Dns.Interfaces.ts' />
 module Dns.ViewModels {
 	 export class ViewModel<D>{
@@ -532,6 +532,108 @@ module Dns.ViewModels {
 	 	 	  return {
 	 	 	 	UserID: this.UserID(),
 	 	 	 	SecurityGroups: this.SecurityGroups == null ? null : this.SecurityGroups().map((item) => {return item.toData();}),
+	 	 	  };
+	 	  }
+
+
+
+	 }
+	 export class CNDSSourceRequestTypeViewModel extends ViewModel<Dns.Interfaces.ICNDSSourceRequestTypeDTO>{
+	 	 public ProjectID: KnockoutObservable<any>;
+	 	 public Project: KnockoutObservable<string>;
+	 	 public RequestTypeID: KnockoutObservable<any>;
+	 	 public RequestType: KnockoutObservable<string>;
+	 	 public LocalRoutes: KnockoutObservableArray<CNDSSourceRequestTypeRoutingViewModel>;
+	 	 public ExternalRoutes: KnockoutObservableArray<CNDSSourceRequestTypeRoutingViewModel>;
+	 	 public InvalidRoutes: KnockoutObservableArray<CNDSSourceRequestTypeRoutingViewModel>;
+	 	 constructor(CNDSSourceRequestTypeDTO?: Dns.Interfaces.ICNDSSourceRequestTypeDTO)
+	 	  {
+	 	 	  super();
+	 	 	 if (CNDSSourceRequestTypeDTO== null) {
+	 	 	 	 this.ProjectID = ko.observable<any>();
+	 	 	 	 this.Project = ko.observable<any>();
+	 	 	 	 this.RequestTypeID = ko.observable<any>();
+	 	 	 	 this.RequestType = ko.observable<any>();
+	 	 	 	 this.LocalRoutes = ko.observableArray<CNDSSourceRequestTypeRoutingViewModel>();
+	 	 	 	 this.ExternalRoutes = ko.observableArray<CNDSSourceRequestTypeRoutingViewModel>();
+	 	 	 	 this.InvalidRoutes = ko.observableArray<CNDSSourceRequestTypeRoutingViewModel>();
+	 	 	  }else{
+	 	 	 	 this.ProjectID = ko.observable(CNDSSourceRequestTypeDTO.ProjectID);
+	 	 	 	 this.Project = ko.observable(CNDSSourceRequestTypeDTO.Project);
+	 	 	 	 this.RequestTypeID = ko.observable(CNDSSourceRequestTypeDTO.RequestTypeID);
+	 	 	 	 this.RequestType = ko.observable(CNDSSourceRequestTypeDTO.RequestType);
+	 	 	 	 this.LocalRoutes = ko.observableArray<CNDSSourceRequestTypeRoutingViewModel>(CNDSSourceRequestTypeDTO.LocalRoutes == null ? null : CNDSSourceRequestTypeDTO.LocalRoutes.map((item) => {return new CNDSSourceRequestTypeRoutingViewModel(item);}));
+	 	 	 	 this.ExternalRoutes = ko.observableArray<CNDSSourceRequestTypeRoutingViewModel>(CNDSSourceRequestTypeDTO.ExternalRoutes == null ? null : CNDSSourceRequestTypeDTO.ExternalRoutes.map((item) => {return new CNDSSourceRequestTypeRoutingViewModel(item);}));
+	 	 	 	 this.InvalidRoutes = ko.observableArray<CNDSSourceRequestTypeRoutingViewModel>(CNDSSourceRequestTypeDTO.InvalidRoutes == null ? null : CNDSSourceRequestTypeDTO.InvalidRoutes.map((item) => {return new CNDSSourceRequestTypeRoutingViewModel(item);}));
+	 	 	 }
+	 	 }
+
+	 	 public toData(): Dns.Interfaces.ICNDSSourceRequestTypeDTO{
+	 	 	  return {
+	 	 	 	ProjectID: this.ProjectID(),
+	 	 	 	Project: this.Project(),
+	 	 	 	RequestTypeID: this.RequestTypeID(),
+	 	 	 	RequestType: this.RequestType(),
+	 	 	 	LocalRoutes: this.LocalRoutes == null ? null : this.LocalRoutes().map((item) => {return item.toData();}),
+	 	 	 	ExternalRoutes: this.ExternalRoutes == null ? null : this.ExternalRoutes().map((item) => {return item.toData();}),
+	 	 	 	InvalidRoutes: this.InvalidRoutes == null ? null : this.InvalidRoutes().map((item) => {return item.toData();}),
+	 	 	  };
+	 	  }
+
+
+
+	 }
+	 export class CNDSSourceRequestTypeRoutingViewModel extends ViewModel<Dns.Interfaces.ICNDSSourceRequestTypeRoutingDTO>{
+	 	 public MappingDefinitionID: KnockoutObservable<any>;
+	 	 public NetworkID: KnockoutObservable<any>;
+	 	 public Network: KnockoutObservable<string>;
+	 	 public ProjectID: KnockoutObservable<any>;
+	 	 public Project: KnockoutObservable<string>;
+	 	 public RequestTypeID: KnockoutObservable<any>;
+	 	 public RequestType: KnockoutObservable<string>;
+	 	 public DataMartID: KnockoutObservable<any>;
+	 	 public DataMart: KnockoutObservable<string>;
+	 	 public IsLocal: KnockoutObservable<boolean>;
+	 	 constructor(CNDSSourceRequestTypeRoutingDTO?: Dns.Interfaces.ICNDSSourceRequestTypeRoutingDTO)
+	 	  {
+	 	 	  super();
+	 	 	 if (CNDSSourceRequestTypeRoutingDTO== null) {
+	 	 	 	 this.MappingDefinitionID = ko.observable<any>();
+	 	 	 	 this.NetworkID = ko.observable<any>();
+	 	 	 	 this.Network = ko.observable<any>();
+	 	 	 	 this.ProjectID = ko.observable<any>();
+	 	 	 	 this.Project = ko.observable<any>();
+	 	 	 	 this.RequestTypeID = ko.observable<any>();
+	 	 	 	 this.RequestType = ko.observable<any>();
+	 	 	 	 this.DataMartID = ko.observable<any>();
+	 	 	 	 this.DataMart = ko.observable<any>();
+	 	 	 	 this.IsLocal = ko.observable<any>();
+	 	 	  }else{
+	 	 	 	 this.MappingDefinitionID = ko.observable(CNDSSourceRequestTypeRoutingDTO.MappingDefinitionID);
+	 	 	 	 this.NetworkID = ko.observable(CNDSSourceRequestTypeRoutingDTO.NetworkID);
+	 	 	 	 this.Network = ko.observable(CNDSSourceRequestTypeRoutingDTO.Network);
+	 	 	 	 this.ProjectID = ko.observable(CNDSSourceRequestTypeRoutingDTO.ProjectID);
+	 	 	 	 this.Project = ko.observable(CNDSSourceRequestTypeRoutingDTO.Project);
+	 	 	 	 this.RequestTypeID = ko.observable(CNDSSourceRequestTypeRoutingDTO.RequestTypeID);
+	 	 	 	 this.RequestType = ko.observable(CNDSSourceRequestTypeRoutingDTO.RequestType);
+	 	 	 	 this.DataMartID = ko.observable(CNDSSourceRequestTypeRoutingDTO.DataMartID);
+	 	 	 	 this.DataMart = ko.observable(CNDSSourceRequestTypeRoutingDTO.DataMart);
+	 	 	 	 this.IsLocal = ko.observable(CNDSSourceRequestTypeRoutingDTO.IsLocal);
+	 	 	 }
+	 	 }
+
+	 	 public toData(): Dns.Interfaces.ICNDSSourceRequestTypeRoutingDTO{
+	 	 	  return {
+	 	 	 	MappingDefinitionID: this.MappingDefinitionID(),
+	 	 	 	NetworkID: this.NetworkID(),
+	 	 	 	Network: this.Network(),
+	 	 	 	ProjectID: this.ProjectID(),
+	 	 	 	Project: this.Project(),
+	 	 	 	RequestTypeID: this.RequestTypeID(),
+	 	 	 	RequestType: this.RequestType(),
+	 	 	 	DataMartID: this.DataMartID(),
+	 	 	 	DataMart: this.DataMart(),
+	 	 	 	IsLocal: this.IsLocal(),
 	 	 	  };
 	 	  }
 

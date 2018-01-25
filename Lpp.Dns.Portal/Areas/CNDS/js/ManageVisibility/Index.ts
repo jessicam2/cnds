@@ -15,76 +15,67 @@ module CNDS.ManageVisibility.Index {
         public isMyNetworkVisible: KnockoutComputed<boolean>;
         public isNoOneVisible: KnockoutComputed<boolean>;
         public isNoOneDisabled: KnockoutComputed<boolean>;
+
         constructor(metadata: Dns.Interfaces.IMetadataDTO, level: number, parent?: ManageVisibilityViewModel) {
             var self = this;
             self.Title = metadata.Title;
             self.ID = metadata.ID;
             self.EntitiyID = metadata.EntityID;
             self.DomainUseID = metadata.DomainUseID;
+
+            if (metadata.Visibility > Dns.Enums.AccessType.AllNetworks)
+                metadata.Visibility = Dns.Enums.AccessType.AllNetworks;
+
             self.Visibility = ko.observable(metadata.Visibility);
             self.Level = "Level" + level;
             self.Children = metadata.ChildMetadata == null ? [] : metadata.ChildMetadata.map((item) => { return new ManageVisibilityViewModel(item, level + 1, self) });
             self.Parent = parent;
+            
             self.Visibility.subscribe((val) => {
                 ko.utils.arrayForEach(self.Children, (item) => {
                     item.Visibility(val);
                 });
             });
-            self.isAnyoneVisible = ko.computed(function () {
-                if (parent == null)
-                    return true;
-                else if (parent.Visibility() == Dns.Enums.AccessType.Anyone)
-                    return true;
-                else
-                    return false;
-            });
-            self.isAllNetworksVisible = ko.computed(function () {
-                if (parent == null)
-                    return true;
-                else if (parent.Visibility() == Dns.Enums.AccessType.Anyone || parent.Visibility() == Dns.Enums.AccessType.AllNetworks)
-                    return true;
-                else
-                    return false;
-            });
-            self.isAllPMNNetworksVisible = ko.computed(function () {
-                if (parent == null)
-                    return true;
-                else if (parent.Visibility() == Dns.Enums.AccessType.Anyone || parent.Visibility() == Dns.Enums.AccessType.AllNetworks || parent.Visibility() == Dns.Enums.AccessType.AllPMNNetworks)
-                    return true;
-                else
-                    return false;
-            });
-            self.isMyNetworkVisible = ko.computed(function () {
-                if (parent == null)
-                    return true;
-                else if (parent.Visibility() == Dns.Enums.AccessType.Anyone || parent.Visibility() == Dns.Enums.AccessType.AllNetworks || parent.Visibility() == Dns.Enums.AccessType.AllPMNNetworks || parent.Visibility() == Dns.Enums.AccessType.MyNetwork)
-                    return true;
-                else
-                    return false;
-            });
-            self.isNoOneVisible = ko.computed(function () {
-                if (parent == null)
-                    return true;
-                else if (parent.Visibility() == Dns.Enums.AccessType.Anyone || parent.Visibility() == Dns.Enums.AccessType.AllNetworks || parent.Visibility() == Dns.Enums.AccessType.AllPMNNetworks || parent.Visibility() == Dns.Enums.AccessType.MyNetwork || parent.Visibility() == Dns.Enums.AccessType.NoOne)
-                    return true;
-                else
-                    return false;
-            });
-            self.isNoOneDisabled = ko.computed(function () {
-                if (parent == null)
-                    return false;
-                else if (parent.Visibility() == Dns.Enums.AccessType.NoOne)
-                    return true;
-                else
-                    return false;
-            });
+
+            self.isAnyoneVisible = ko.computed(() => {
+                return self.Parent == null || self.Parent.Visibility() == Dns.Enums.AccessType.Anyone;
+            }, self, { deferred: true });
+            
+
+            self.isAllNetworksVisible = ko.computed(() => {
+                return self.Parent == null || self.Parent.Visibility() >= Dns.Enums.AccessType.AllNetworks;
+            }, self, { deferred: true });
+            
+
+            self.isAllPMNNetworksVisible = ko.computed(() => {
+                return self.Parent == null || self.Parent.Visibility() >= Dns.Enums.AccessType.AllPMNNetworks;
+            }, self, { deferred: true });
+            
+
+            self.isMyNetworkVisible = ko.computed(() => {
+                return self.Parent == null || self.Parent.Visibility() >= Dns.Enums.AccessType.MyNetwork;
+            }, self, { deferred: true });
+            
+
+            self.isNoOneVisible = ko.computed(() => {
+                return self.Parent == null || self.Parent.Visibility() >= Dns.Enums.AccessType.NoOne;
+            }, self, { deferred: true });
+            
+
+            self.isNoOneDisabled = ko.computed(() => {
+                return self.Parent == null || self.Parent.Visibility() == Dns.Enums.AccessType.NoOne;
+            }, this, { deferred: true });
+
+
+
+            
         }
 
         public toData(): Dns.Interfaces.IMetadataDTO{
             var self = this;
             return {
                 ID: self.ID,
-                Title: "asd",
+                Title: self.Title,
                 DataType: null,
                 Description: null,
                 IsMultiValue: false,
@@ -109,10 +100,26 @@ module CNDS.ManageVisibility.Index {
         public AllPMNNetworksSelectAll: () => void;
         public AllNetworksSelectAll: () => void;
         public AnyoneSelectAll: () => void;
+
+        public toData: () => Dns.Interfaces.IMetadataDTO[];
+
         constructor(bindingControl: JQuery, metadata: Dns.Interfaces.IMetadataDTO[]) {
             super(bindingControl);
             var self = this;
-            self.Metadata = metadata.map((item) => { return new ManageVisibilityViewModel(item, 1, null) });
+            var sortedMetadata: Dns.Interfaces.IMetadataDTO[] = [];
+
+            ko.utils.arrayForEach(metadata, (item) => {
+                if (item.DataType.toLowerCase() != "container" && item.DataType.toLowerCase() != "booleangroup")
+                    sortedMetadata.push(item);
+            });
+
+            ko.utils.arrayForEach(metadata, (item) => {
+                if (item.DataType.toLowerCase() == "container" || item.DataType.toLowerCase() == "booleangroup")
+                    sortedMetadata.push(item);
+            });
+
+            self.Metadata = sortedMetadata.map((item) => { return new ManageVisibilityViewModel(item, 1, null) });
+            
             self.NoOneSelectAll = () => {
                 ko.utils.arrayForEach(self.Metadata, (item) => {
                     item.Visibility(Dns.Enums.AccessType.NoOne);
@@ -138,10 +145,16 @@ module CNDS.ManageVisibility.Index {
                     item.Visibility(Dns.Enums.AccessType.Anyone);
                 });
             };
+
+            self.toData = () => {
+                let output = ko.utils.arrayMap(self.Metadata, (m) => m.toData());
+                return output;
+            };
         }
     }
 
     export function init(bindingControl: JQuery, metadata: Dns.Interfaces.IMetadataDTO[]) {
+        
         var vm = new ViewModel(bindingControl, metadata);
         $(() => {
             ko.applyBindings(vm, bindingControl[0]);

@@ -162,7 +162,6 @@ module Controls.MetadataViewer.Index {
             var groupedMetadata = ko.utils.arrayFilter((metadata), (item) => {
                 return item.DataType.toLowerCase() == "container" || item.DataType.toLowerCase() == "booleangroup";
             });
-            //debugger;
             self.NonGroupedMetadata = nonGroups.map((item) => { return new MetadataViewModel(item) });
             self.GroupedMetadata = groupedMetadata.map((item) => { return new MetadataViewModel(item) });
         }

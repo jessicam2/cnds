@@ -231,9 +231,10 @@ namespace Lpp.CNDS.Api.DataSources
         [HttpGet]
         public IQueryable<DomainDataDTO> GetDomainVisibility(Guid id)
         {
-            return (from uda in DataContext.DomainAccess.OfType<DataSourceDomainAccess>()
+            var data = (from uda in DataContext.DomainAccess.OfType<DataSourceDomainAccess>()
                     join du in DataContext.DomainUses on uda.DomainUse.ID equals du.ID
                     where uda.DataSourceID == id
+                    && du.Deleted == false && du.Domain.Deleted == false
                     select new DomainDataDTO
                     {
                         ID = du.DomainID,
@@ -241,6 +242,8 @@ namespace Lpp.CNDS.Api.DataSources
                         DomainUseID = du.ID,
                         Visibility = uda.AccessType
                     });
+
+            return data;
         }
 
         [HttpPost]
@@ -248,25 +251,31 @@ namespace Lpp.CNDS.Api.DataSources
         {
             try
             {
-                foreach (var domain in domains)
-                {
-                    var previousDomain = DataContext.DomainAccess.OfType<DataSourceDomainAccess>().FirstOrDefault(x => x.DomainUseID == domain.DomainUseID && x.DataSourceID == domain.EntityID);
+                var entities = domains.Select(d => d.EntityID).Distinct().ToArray();
+                var domainUses = domains.Select(d => d.DomainUseID).Distinct().ToArray();
 
-                    if (previousDomain == null)
+                var domainAccess = await (from dsda in DataContext.DomainAccess.OfType<DataSourceDomainAccess>()
+                                   where entities.Contains(dsda.DataSourceID)
+                                   && domainUses.Contains(dsda.DomainUseID)
+                                   select dsda).ToArrayAsync();
+
+                foreach(var dom in domains)
+                {
+                    var domain = domainAccess.Where(da => da.DataSourceID == dom.EntityID.Value && da.DomainUseID == dom.DomainUseID).FirstOrDefault();
+                    if(domain == null)
                     {
-                        DataContext.DomainAccess.Add(new DataSourceDomainAccess
-                        {
-                            DataSourceID = domain.EntityID.Value,
-                            DomainUseID = domain.DomainUseID,
-                            AccessType = domain.Visibility,
+                        DataContext.DomainAccess.Add(new DataSourceDomainAccess {
+                            DataSourceID = dom.EntityID.Value,
+                            DomainUseID = dom.DomainUseID,
+                            AccessType = dom.Visibility
                         });
                     }
                     else
                     {
-                        previousDomain.AccessType = domain.Visibility;
+                        domain.AccessType = dom.Visibility;
                     }
-
                 }
+
                 await DataContext.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -278,35 +287,61 @@ namespace Lpp.CNDS.Api.DataSources
         [HttpPost]
         public async Task<IEnumerable<DataSourceSearchDTO>> DataSourceSearch(SearchDTO ids)
         {
-
-            var domainUseIDs = await (from d in DataContext.Domains.AsNoTracking()
-                                   join du in DataContext.DomainUses on d.ID equals du.DomainID
-                                   where ids.DomainIDs.Contains(d.ID) && d.DataType != "container" && d.DataType != "booleanGroup" && du.EntityType == EntityType.DataSource && !d.Deleted && !du.Deleted
-                                   select du.ID).ToListAsync();
-
-            var query = await (from d in DataContext.DomainDatas.OfType<DataSourceDomainData>().AsNoTracking()
-                               join dda in DataContext.DomainAccess.OfType<DataSourceDomainAccess>().AsNoTracking() on new { d.DomainUseID, d.DataSourceID } equals new { dda.DomainUseID, dda.DataSourceID }
-                               join ds in DataContext.DataSources on dda.DataSourceID equals ds.ID
-                               join ne in DataContext.NetworkEntities on ds.ID equals ne.ID
-                               where d.Value != "false" && d.Value.Trim() != "" 
-                               && (ids.DomainReferencesIDs.Count() == 0 ? domainUseIDs.Contains(d.DomainUseID) : true)
-                               && (ids.DomainReferencesIDs.Count() > 0 ? domainUseIDs.Contains(d.DomainUseID) || ids.DomainReferencesIDs.Contains(d.DomainReferenceID.Value) : true)
-                               && (dda.AccessType == AccessType.NoOne ? false : dda.AccessType == AccessType.MyNetwork ? ne.NetworkID == ids.NetworkID : true)
-                               group new { d.DomainUseID, d.DomainReferenceID } by d.DataSourceID into res
-                                select new
-                                {
-                                    ID = res.Key,
-                                    DomainUseIDs = res.Where(x => x.DomainUseID != null).Select(x => x.DomainUseID).Distinct().ToList(),
-                                    DomainReferenceIDs = res.Where(x => x.DomainReferenceID != null && ids.DomainReferencesIDs.Contains(x.DomainReferenceID.Value)).Select(x => x.DomainReferenceID).Distinct().ToList()
-                                }).ToArrayAsync();
+            //*****Summary of Execution*******
+            // ALL Domains and DomainReferences are ANDed together except for Container 
+            // (due to its DomainUseID will never be in the DomainData Table cause it will never have a value).
+            // Now in a specific occasion References will be ommited, and that is if none of its children are selected.
 
 
 
-            var dsIDs = query.Where(x => 
-                                    (ids.DomainReferencesIDs.Count() == 0 ? x.DomainUseIDs.Count() == domainUseIDs.Count() : true)
-                                    && (ids.DomainReferencesIDs.Count() > 0 ? x.DomainUseIDs.Count() == domainUseIDs.Count() && x.DomainReferenceIDs.Count() == ids.DomainReferencesIDs.Count() : true
-                                    )).Select(x => x.ID).ToList();
+            var domainUseIDs = from d in DataContext.Domains.AsNoTracking()
+                                join du in DataContext.DomainUses on d.ID equals du.DomainID
+                                where ids.DomainIDs.Contains(d.ID) && d.DataType != "container"
+                                && du.EntityType == EntityType.DataSource && !d.Deleted && !du.Deleted
+                                select new {
+                                    DomainUseID = du.ID,
+                                    DataType = d.DataType
+                                };
 
+            var filterBasedDomainReferences = from d in DataContext.Domains.AsNoTracking()
+                      join dr in DataContext.DomainReferences on d.ID equals dr.DomainID
+                      join du in DataContext.DomainUses on d.ID equals du.DomainID
+                      where ids.DomainReferencesIDs.Contains(dr.ID) && du.EntityType == EntityType.DataSource && !d.Deleted && !du.Deleted
+                      select du.ID;
+
+
+            List<Guid> DomainUseToRemove = new List<Guid>();
+
+            foreach (var id in domainUseIDs.Where(x => x.DataType == "reference").Select(x => x.DomainUseID))
+            {
+                bool toBeFiltered = filterBasedDomainReferences.Any(x => x == id);
+                if (!toBeFiltered)
+                    DomainUseToRemove.Add(id);
+            }
+                
+
+            var newDomainUseID = domainUseIDs.Where(x => !DomainUseToRemove.Contains(x.DomainUseID)).Select(x => x.DomainUseID);
+
+            var query =  from d in DataContext.DomainDatas.OfType<DataSourceDomainData>().AsNoTracking()
+                            join dda in DataContext.DomainAccess.OfType<DataSourceDomainAccess>().AsNoTracking() on new { d.DomainUseID, d.DataSourceID } equals new { dda.DomainUseID, dda.DataSourceID }
+                            join ds in DataContext.DataSources on dda.DataSourceID equals ds.ID
+                            join ne in DataContext.NetworkEntities on ds.ID equals ne.ID
+                            where d.Value != "false" && d.Value.Trim() != ""
+                            && (ids.DomainReferencesIDs.Count() == 0 ? newDomainUseID.Contains(d.DomainUseID) : true)
+                            && (ids.DomainReferencesIDs.Count() > 0 ? newDomainUseID.Contains(d.DomainUseID) || ids.DomainReferencesIDs.Contains(d.DomainReferenceID.Value) : true)
+                            && (dda.AccessType == AccessType.NoOne ? false : dda.AccessType == AccessType.MyNetwork ? ne.NetworkID == ids.NetworkID : true)
+                            group new { d.DomainUseID, d.DomainReferenceID } by d.DataSourceID into res
+                            select new
+                            {
+                                ID = res.Key,
+                                DomainUseIDs = res.Where(x => x.DomainUseID != null).Select(x => x.DomainUseID).Distinct().ToList(),
+                                DomainReferenceIDs = res.Where(x => x.DomainReferenceID != null && ids.DomainReferencesIDs.Contains(x.DomainReferenceID.Value)).Select(x => x.DomainReferenceID).Distinct().ToList()
+                            };
+
+            var dsIDs = query.Where(x =>
+                                    (ids.DomainReferencesIDs.Count() == 0 ? x.DomainUseIDs.Count() == newDomainUseID.Count() : true)
+                                    && (ids.DomainReferencesIDs.Count() > 0 ? x.DomainUseIDs.Count() == newDomainUseID.Count() && x.DomainReferenceIDs.Count() == ids.DomainReferencesIDs.Count() : true
+                                    )).Select(x => x.ID);
 
             return await (from d in DataContext.DataSources.AsNoTracking()
                    join ne in DataContext.NetworkEntities.AsNoTracking() on d.ID equals ne.ID

@@ -619,6 +619,22 @@ module CNDS.Interfaces
 	 	 	'DomainAccessValue': { type:'number', nullable: false},
 	 	 }
 	 }
+	 export interface INetworkEntityDTO extends IEntityDtoWithID{
+	 	 NetworkID: any;
+	 	 Network: string;
+	 	 EntityType: CNDS.Enums.EntityType;
+	 	 NetworkEntityID: any;
+	 }
+	 export var KendoModelNetworkEntityDTO: any = {
+	 	 fields: {
+	 	 	'NetworkID': { type:'any', nullable: false},
+	 	 	'Network': { type:'string', nullable: false},
+	 	 	'EntityType': { type:'cnds.enums.entitytype', nullable: false},
+	 	 	'NetworkEntityID': { type:'any', nullable: false},
+	 	 	'ID': { type:'any', nullable: true},
+	 	 	'Timestamp': { type:'any', nullable: false},
+	 	 }
+	 }
 	 export interface INetworkDTO extends IEntityDtoWithID{
 	 	 Name: string;
 	 	 Url: string;

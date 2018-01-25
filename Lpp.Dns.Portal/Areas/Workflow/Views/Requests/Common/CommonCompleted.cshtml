@@ -25,7 +25,7 @@
             <tbody data-bind="foreach: VirtualRoutings">
                 <tr>
                     <td><input type="checkbox" id="chkRoutingSelect" data-bind="value: ID, checked:$root.SelectedCompleteResponses" /></td>
-                    <td><a href="#" data-bind="text: Name"></a></td>
+                    <td><a href="#" data-bind="text: Name, href: '/datamarts/details?ID=' + DataMartID, visible:IsGroup == false"></a><a href="#" data-bind="text: Name, visible:IsGroup"></a></td>
                     <td data-bind="text: Global.Helpers.GetEnumString(Dns.Enums.RoutingStatusTranslation, Status)"></td>
                     <td data-bind="html: Messages "></td>
                     <td><a data-bind="click: $root.onShowRoutingHistory">[History]</a></td>

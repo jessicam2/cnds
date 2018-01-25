@@ -1,8 +1,13 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 /// <reference path="../../../../js/_layout.ts" />
 var CNDS;
 (function (CNDS) {
@@ -139,7 +144,7 @@ var CNDS;
                         if (result) {
                             _this.SelectedMappings([]);
                             $('#gMappings').data('kendoGrid').clearSelection();
-                            _this.RequestTypeMappings.fetch();
+                            _this.RequestTypeMappings.read();
                         }
                         window.location.reload();
                     });
@@ -161,7 +166,7 @@ var CNDS;
                     }); });
                     Global.Helpers.ShowDialog('Edit RequestType Mapping Definition', '/cnds/managerequesttypes/editmapping', [], 850, 750, { ID: selectedMapping.ID, Routes: routes }).done(function (result) {
                         if (result) {
-                            _this.RequestTypeMappings.fetch();
+                            _this.RequestTypeMappings.read();
                         }
                     });
                 };
@@ -203,7 +208,7 @@ var CNDS;
                         if (result) {
                             _this.SelectedRouteDefinitions([]);
                             $('#gDefinitions').data('kendoGrid').clearSelection();
-                            _this.RouteDefinitions.fetch();
+                            _this.RouteDefinitions.read();
                         }
                         window.location.reload();
                     });
@@ -213,7 +218,7 @@ var CNDS;
                     var selectedDefinition = this.SelectedRouteDefinitions()[0];
                     Global.Helpers.ShowDialog('Edit RequestType Route Definition', '/cnds/managerequesttypes/editdefinition', [], 750, 450, { ID: selectedDefinition.ID }).done(function (result) {
                         if (result) {
-                            _this.RouteDefinitions.fetch();
+                            _this.RouteDefinitions.read();
                         }
                     });
                 };
@@ -233,6 +238,7 @@ var CNDS;
                                 Users.SetSetting("CNDS.ManageRequestTypes.gDefinitions.User:" + User.ID, Global.Helpers.GetGridSettings($("#gDefinitions").data("kendoGrid")));
                             }
                             catch (ex) {
+                                //ignore the error 
                             }
                             ;
                         });
@@ -241,6 +247,7 @@ var CNDS;
                             Global.Helpers.SetGridFromSettings($("#gDefinitions").data("kendoGrid"), gridRequestTypeDefinitionsSettings);
                         }
                         catch (ex) {
+                            //ignore the error
                         }
                         ;
                     });

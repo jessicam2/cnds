@@ -15,6 +15,7 @@
     <NuGetPackageImportStamp>cb635e47</NuGetPackageImportStamp>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <RunCodeAnalysis>true</RunCodeAnalysis>
@@ -171,6 +172,7 @@
       <Generator>RazorGenerator</Generator>
       <LastGenOutput>SubjectGroups.generated.cs</LastGenOutput>
     </Content>
+    <None Include="tsconfig.json" />
     <None Include="Views\web.config" />
   </ItemGroup>
   <ItemGroup>

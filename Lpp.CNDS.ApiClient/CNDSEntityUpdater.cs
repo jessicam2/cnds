@@ -329,7 +329,7 @@ namespace Lpp.CNDS.ApiClient
                 {
                     domainreferences.Add(GetSearchMetadataReferences(currentMeta, reference));
                 }
-                metaData.References = domainreferences;
+                metaData.References = domainreferences.OrderBy(p => p.Title);
             }
 
             //Fills the Child Metadata where a Parent Metadata Exists
@@ -339,7 +339,7 @@ namespace Lpp.CNDS.ApiClient
                 {
                     childMetadata.Add(GetSearchMetaData(child.ID, availableMetadata, metaData.SelectedDisplay));
                 }
-                metaData.ChildMetadata = childMetadata;
+                metaData.ChildMetadata = childMetadata.OrderBy(p => p.Title);
             }
             return metaData;
         }

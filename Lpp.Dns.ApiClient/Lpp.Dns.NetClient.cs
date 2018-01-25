@@ -2115,10 +2115,17 @@ namespace Lpp.Dns.ApiClient
 	 	 {
 	 	 	 await Client.Delete(Path + "/DeleteMapping", mappingID);
 	 	 }
-	 	 public async Task<System.Collections.Generic.IEnumerable<Lpp.Dns.DTO.CNDSExternalRequestTypeSelectionItemDTO>> AvailableRequestTypesForNewRequest(string oDataQuery = null)
+	 	 public async Task<System.Collections.Generic.IEnumerable<Lpp.Dns.DTO.CNDSExternalRequestTypeSelectionItemDTO>> AvailableRequestTypesForNewRequestOriginal(string oDataQuery = null)
 	 	 {
 
-	 	 	 var result = await Client.Get<Lpp.Dns.DTO.CNDSExternalRequestTypeSelectionItemDTO>(Path + "/AvailableRequestTypesForNewRequest", oDataQuery);
+	 	 	 var result = await Client.Get<Lpp.Dns.DTO.CNDSExternalRequestTypeSelectionItemDTO>(Path + "/AvailableRequestTypesForNewRequestOriginal", oDataQuery);
+	 	 	 return result.ReturnList();
+	 	 }
+	 	 public async Task<System.Collections.Generic.IEnumerable<Lpp.Dns.DTO.CNDSSourceRequestTypeDTO>> AvailableRequestTypesForNewRequest(System.Collections.Generic.IEnumerable<System.Guid> id, string oDataQuery = null)
+	 	 {
+	 	 	 var idQueryString = string.Join("&", id.Select(i => string.Format("{0}={1}", "id", System.Net.WebUtility.UrlEncode(i.ToString()))));
+
+	 	 	 var result = await Client.Get<Lpp.Dns.DTO.CNDSSourceRequestTypeDTO>(Path + "/AvailableRequestTypesForNewRequest?" + idQueryString + "&", oDataQuery);
 	 	 	 return result.ReturnList();
 	 	 }
 	 	 public async Task<System.Collections.Generic.IEnumerable<Lpp.Dns.DTO.CNDSNetworkRequestTypeDefinitionDTO>> ListNetworkRequestTypeDefinitions(string oDataQuery = null)

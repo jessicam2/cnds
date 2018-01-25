@@ -55,15 +55,20 @@ module CNDS.Search.DataSources_NoQlik {
     export class ViewModel extends Global.PageViewModel {
         public Domains: KnockoutObservableArray<DomainsViewModel>;
         public dsResults: kendo.data.DataSource;
+        public EnableContinue: KnockoutObservable<boolean>;
 
         constructor(domains: Dns.Interfaces.ICNDSSearchMetaDataDTO[], bindingControl: JQuery) {
             super(bindingControl);
             let self = this;
             self.Domains = ko.observableArray(domains.map((item) => { return new DomainsViewModel(item) }));
 
+            ViewModel.RecursivlySortDS(self.Domains);
+
             self.dsResults = new kendo.data.DataSource({
                 data: []
             });
+
+            self.EnableContinue = ko.observable(false);
         }
 
         static FindRecursiveDomain(data: KnockoutObservableArray<DomainsViewModel>, ID: any, val: boolean) {
@@ -131,6 +136,14 @@ module CNDS.Search.DataSources_NoQlik {
             return ids;
         }
 
+        static RecursivlySortDS(ds: KnockoutObservableArray<DomainsViewModel>) {
+            ds.sort(function (left, right) { return left.Title.toLowerCase() == right.Title.toLowerCase() ? 0 : (left.Title.toLowerCase() < right.Title.toLowerCase() ? -1 : 1) });
+            ko.utils.arrayForEach(ds(), (item) => {
+                if (item.ChildMetadata().length > 0)
+                    ViewModel.RecursivlySortDS(item.ChildMetadata);
+            });
+        }
+
         public SelectDomain(data: DomainsViewModel) {
             let self = this;
             if (data.CheckedValue() == false) {
@@ -167,7 +180,9 @@ module CNDS.Search.DataSources_NoQlik {
                 self.dsResults.data().empty();
                 ko.utils.arrayForEach(results, (item) => {
                     self.dsResults.data().push(item);
-                })
+                });
+
+                self.EnableContinue(results != null && results.length > 0);
             })
         }
 
@@ -180,6 +195,11 @@ module CNDS.Search.DataSources_NoQlik {
 
                 ids += "&id=" + data.ID;
             });
+
+            if (ids.length < 4) {
+                return;
+            }
+
             window.location.href = '/cnds/search/NewRequest?' + ids.slice(1);
 
         }

@@ -40,7 +40,12 @@ namespace Lpp.Dns.Api.DataMarts
         {
             var datamart = await DataContext.DataMarts.Where(o => o.ID == id && o.DataMartTypeID != CNDSImportedDataMartTypeID).AsNoTracking().Map<DataMart, DataMartDTO>().FirstOrDefaultAsync();
             if (datamart == null)
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, "The specified DataMart was not found."));
+            {
+                if(await DataContext.DataMarts.AnyAsync(o => o.ID == id && o.DataMartTypeID == CNDSImportedDataMartTypeID))
+                    throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, "You do not have permission to view the selected DataMart."));
+                else
+                    throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, "The specified DataMart was not found."));
+            }
 
             //TODO: create helper to cache
             var cndsDMID = Guid.Empty;

@@ -11,7 +11,7 @@ namespace Lpp.Dns.DTO
     public class CNDSNetworkProjectRequestTypeDataMartDTO : CNDSProjectRequestTypeDataMartDTO
     {
         [DataMember]
-        public Guid DefinitionID { get; set; }
+        public Guid? DefinitionID { get; set; }
         [DataMember]
         public Guid NetworkID { get; set; }
         [DataMember]

@@ -6,7 +6,8 @@
     "removeComments": false,
     "sourceMap": true,
     "target": "es5",
-    "module": "none"
+    "module": "none",
+    "declaration": false
   },
   "exclude": [
     "node_modules",

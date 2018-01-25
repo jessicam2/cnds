@@ -1,9 +1,14 @@
 /// <reference path="../_rootlayout.ts" />
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var DataMarts;
 (function (DataMarts) {
     var Details;
@@ -150,10 +155,7 @@ var DataMarts;
                     //Update the values for the ID and timestamp as necessary.
                     vm.DataMart.ID(datamart[0].ID);
                     vm.DataMart.Timestamp(datamart[0].Timestamp);
-                    var visibilities = [];
-                    ko.utils.arrayForEach(self.MetadataViewer.Metadata, function (item) {
-                        visibilities.push(item.toData());
-                    });
+                    var visibilities = self.MetadataViewer.toData();
                     $.when(Dns.WebApi.DataMarts.UpdateDataMartVisibility(visibilities)).done(function () {
                         // Save everything else
                         var installedModels = _this.InstalledDataModels.InstalledDataModels().map(function (o) {

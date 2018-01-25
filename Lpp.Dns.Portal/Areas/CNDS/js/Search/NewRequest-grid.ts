@@ -7,15 +7,13 @@ module CNDS.Search.DataSources_Grid {
 
     export class ViewModel {
         public dsDataSources: kendo.data.DataSource;
-        public FilterQEDataSources: KnockoutObservable<boolean>;
         public SelectedDataSources: any;
         public onSelectRequestType: () => void;
         public NumberOfSelectedDataSources: KnockoutObservable<number>;
 
-        public SelectedRequestTypeDetails: KnockoutObservable<CNDS.Search.Interfaces.IRequestTypeSelection>;
+        public SelectedRequestTypeDetails: KnockoutObservable<Dns.Interfaces.ICNDSSourceRequestTypeDTO>;
         public SelectedRequestTypeName: KnockoutComputed<string>;
         public SelectedRequestTypeProjectName: KnockoutComputed<string>;
-        public SelectedRequestTypeRoutes: KnockoutComputed<Dns.Interfaces.ICNDSNetworkProjectRequestTypeDataMartDTO[]>;
         public DisableNewRequestButton: KnockoutObservable<boolean>;
 
         constructor() {
@@ -39,13 +37,6 @@ module CNDS.Search.DataSources_Grid {
                 return "";
             });
 
-            self.SelectedRequestTypeRoutes = ko.pureComputed(() => {
-                if (self.SelectedRequestTypeDetails() != null) {
-                    return self.SelectedRequestTypeDetails().Routes;
-                }
-                return [];
-            });
-
             self.dsDataSources = new kendo.data.DataSource({
                 data: [],
                 schema: {
@@ -56,18 +47,20 @@ module CNDS.Search.DataSources_Grid {
                     { field: 'Organization', dir: 'asc' },
                     { field: 'Name', dir: 'asc' }
                 ]
-                //filter: [
-                //    { field: 'AdapterSupported', operator: 'neq', value: '' }
-                //]
             });
 
-            let ids: string[] = <string[]>(<any>$.url().param("id"));
+            let ids = <any>$.url().param("id");
+            if (Array.isArray(ids) == false) {
+                //if only one id is specified the result is only a string, need to convert to an array.
+                ids = [ids];
+            }
             let idFilter = ids.map(id => "ID eq " + id).join(' or ');
+
             Dns.WebApi.CNDSSearch.DataSources(idFilter).done((datasources) => {                
                 self.dsDataSources.data(datasources);
             });
-
-            var grid = $('#gDataSources').kendoGrid({
+            
+            let grid = $('#gDataSources').kendoGrid({
                 dataSource: self.dsDataSources,
                 pageable: false,
                 sortable: true,
@@ -92,6 +85,16 @@ module CNDS.Search.DataSources_Grid {
                             $("#" + item).click();
                         });
                     }
+                },
+                columnMenuInit: (e) => {
+                    let menu = e.container.find(".k-menu").data("kendoMenu");
+                    menu.bind("close", () => {
+                        try {
+                            Users.SetSetting("CNDS.Search.DataSources.gDataSources.User:" + User.ID, Global.Helpers.GetGridSettings(grid));
+                        } catch (ex) {
+                            //ignore the error
+                        };
+                    });
                 }
             }).data("kendoGrid");
 
@@ -117,6 +120,13 @@ module CNDS.Search.DataSources_Grid {
                 } else {
                     row.removeClass("k-state-selected");
                 }
+
+                let headerCheckbox = $('.header-checkbox');
+                if (self.NumberOfSelectedDataSources() > 0) {
+                    headerCheckbox.prop('checked', true);
+                } else {
+                    headerCheckbox.removeProp('checked');
+                }
                 
 
             });
@@ -126,7 +136,6 @@ module CNDS.Search.DataSources_Grid {
                 
                 let rows = $(grid.tbody).children('tr:has(input[type=checkbox])');
                 if (checked) {
-
                     rows.addClass('k-state-selected');
                 } else {
                     rows.removeClass('k-state-selected');
@@ -147,20 +156,6 @@ module CNDS.Search.DataSources_Grid {
                 self.NumberOfSelectedDataSources(Object.keys(self.SelectedDataSources).length);
             });
 
-            self.FilterQEDataSources = ko.observable(false);
-            self.FilterQEDataSources.subscribe((value) => {
-                if (value) {
-                    self.dsDataSources.filter({ field: 'AdapterSupported', operator: 'neq', value: '' });
-                } else {
-                    self.dsDataSources.filter([]);
-                }
-
-                //reset the selected rows, and select all header checkbox
-                self.SelectedDataSources = {};
-                self.NumberOfSelectedDataSources(0);
-                grid.thead.find('.header-checkbox').prop('checked', false);                
-            });
-
             self.onSelectRequestType = () => {
                 let selected = [];
                 for (let key in self.SelectedDataSources) {
@@ -178,7 +173,7 @@ module CNDS.Search.DataSources_Grid {
 
                 self.DisableNewRequestButton(true);
 
-                Global.Helpers.ShowDialog('Select the Request Project and Type', '/CNDS/Search/SelectRequestType', [], 800, 700, { DataSources: selected }).done((result: CNDS.Search.Interfaces.IRequestTypeSelection) => {
+                Global.Helpers.ShowDialog('Select the Request Project and Type', '/CNDS/Search/SelectRequestType', [], 800, 700, { DataSources: selected }).done((result: Dns.Interfaces.ICNDSSourceRequestTypeDTO) => {
                     if (result == null) {
                         self.DisableNewRequestButton(false);
                         self.SelectedRequestTypeDetails(null);
@@ -195,11 +190,13 @@ module CNDS.Search.DataSources_Grid {
 
                         Global.Helpers.ShowExecuting();
 
+                        let routes = (self.SelectedRequestTypeDetails().LocalRoutes || []).concat((self.SelectedRequestTypeDetails().ExternalRoutes || [])).map(rt => <Dns.Interfaces.ICNDSNetworkProjectRequestTypeDataMartDTO>{ DefinitionID: rt.MappingDefinitionID, NetworkID: rt.NetworkID, Network: rt.Network, ProjectID: rt.ProjectID, Project: rt.Project, DataMartID: rt.DataMartID, DataMart: rt.DataMart, RequestTypeID: rt.RequestTypeID, RequestType: rt.RequestType });
+                        
                         //save the request, navigate to the request details page                        
                         Dns.WebApi.Requests.CreateRequest(<Dns.Interfaces.ICreateCNDSRequestDetailsDTO>{
                             Comment: null,
                             Data: null,
-                            Routes: self.SelectedRequestTypeDetails().Routes,
+                            Routes: routes,
                             DemandActivityResultID: null,
                             Dto: request
                         }).done((res: Dns.Interfaces.IRequestCompletionResponseDTO[]) => {
@@ -221,15 +218,6 @@ module CNDS.Search.DataSources_Grid {
                 vm = new ViewModel();
                 var bindingControl = $('#Content');
                 ko.applyBindings(vm, bindingControl[0]);
-
-                $(window).unload(() => {
-                    try {
-                        Users.SetSetting("CNDS.Search.DataSources.gDataSources.User:" + User.ID, Global.Helpers.GetGridSettings($("#gDataSources").data("kendoGrid")));
-                    } catch (ex) {
-                        //ignore the error 
-                    };
-                });
-
                 try {
                     Global.Helpers.SetGridFromSettings($("#gDataSources").data("kendoGrid"), gridDataSourcesSettings);
                 } catch (ex) {

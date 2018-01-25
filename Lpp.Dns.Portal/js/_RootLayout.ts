@@ -33,7 +33,7 @@ module RootLayout {
 
 module Users {
     export function GetSetting(Key: string) : JQueryDeferred<string> {
-        var deferred = $.Deferred();
+        var deferred = $.Deferred<string>();
 
         var setting = Global.Session(Key);
 
@@ -52,21 +52,21 @@ module Users {
         }
 
 
-        return deferred
+        return deferred;
     }
 
-    export function SetSetting(Key: string, setting: string): JQueryDeferred<void> {
-        if (setting === Global.Session(Key)) {
+    export function SetSetting(key: string, setting: string): JQueryDeferred<void> {
+        let sessionStorageValue = Global.Session(key);
+        if (sessionStorageValue != null && setting === sessionStorageValue) {
             var deferred: JQueryDeferred<void> = $.Deferred<void>();
             deferred.resolve();
             return deferred;
         }
             
-        Global.Session(Key, setting);
-        
+        Global.Session(key, setting);
 
         return <any> Dns.WebApi.Users.SaveSetting({
-            Key: Key,
+            Key: key,
             UserID: User.ID,
             Setting: setting
         });

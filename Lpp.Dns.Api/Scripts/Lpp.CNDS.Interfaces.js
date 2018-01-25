@@ -376,6 +376,16 @@ var CNDS;
                 'DomainAccessValue': { type: 'number', nullable: false },
             }
         };
+        Interfaces.KendoModelNetworkEntityDTO = {
+            fields: {
+                'NetworkID': { type: 'any', nullable: false },
+                'Network': { type: 'string', nullable: false },
+                'EntityType': { type: 'cnds.enums.entitytype', nullable: false },
+                'NetworkEntityID': { type: 'any', nullable: false },
+                'ID': { type: 'any', nullable: true },
+                'Timestamp': { type: 'any', nullable: false },
+            }
+        };
         Interfaces.KendoModelNetworkDTO = {
             fields: {
                 'Name': { type: 'string', nullable: false },

@@ -209,7 +209,7 @@ namespace Lpp.Dns.Api.CNDS
         /// Gets the cnds requesttype mappings that are applicable to the current network and the current user has permission to create a request for.
         /// </summary>
         [HttpGet]
-        public async Task<IEnumerable<CNDSExternalRequestTypeSelectionItemDTO>> AvailableRequestTypesForNewRequest()
+        public async Task<IEnumerable<CNDSExternalRequestTypeSelectionItemDTO>> AvailableRequestTypesForNewRequestOriginal()
         {
             //get all the requesttypes the user has permission to create a request for
 
@@ -251,6 +251,114 @@ namespace Lpp.Dns.Api.CNDS
             }
 
             return requestTypes.OrderBy(rt => rt.Project).ThenByDescending(rt => rt.MappingDefinitions.Count()).ThenBy(rt => rt.RequestType);
+        }
+
+        /// <summary>
+        /// Gets the valid requesttypes that the user can create for the specified datasources. The returned requesttypes will support at least one local or external datasource.
+        /// </summary>
+        /// <param name="id">The ids of the datasources that are desired to be routed to.</param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IEnumerable<CNDSSourceRequestTypeDTO>> AvailableRequestTypesForNewRequest([FromUri]IEnumerable<Guid> id)
+        {
+            var externalDataSourceInformation = await CNDSApi.DataSources.ListExtended("$filter=" + string.Join(" or ", id.Select(i => string.Format("ID eq {0}", i.ToString("D")))));
+
+            var localNetwork = await DataContext.Networks.Where(n => n.Name != "Aqueduct").Select(n => new { n.ID, n.Name }).FirstOrDefaultAsync();
+
+            var networkResponse = await CNDSApi.Networks.LookupEntities(localNetwork.ID, id);
+            var content = await networkResponse.Content.ReadAsStringAsync();
+
+            var localDataMartIdentifiers = Newtonsoft.Json.JsonConvert.DeserializeObject<Lpp.Utilities.BaseResponse<NetworkEntityIdentifier>>(content);
+            var localDataMartIds = localDataMartIdentifiers.results.Select(i => i.NetworkEntityID).ToArray();
+
+            var projects = await (from p in DataContext.Secure<Project>(Identity, Lpp.Dns.DTO.Security.PermissionIdentifiers.Request.Edit)
+                                  where p.Active && !p.Deleted && (!p.EndDate.HasValue || p.EndDate.Value > DateTime.UtcNow) && (p.StartDate <= DateTime.UtcNow)
+                                  select p.ID).ToArrayAsync();
+
+            var requestTypes = await (from rt in DataContext.ProjectRequestTypes
+                                      join project in DataContext.Projects on rt.ProjectID equals project.ID
+                                      let userID = Identity.ID
+                                      let netID = localNetwork.ID
+                                      let netName = localNetwork.Name
+                                      let wAcls = DataContext.ProjectRequestTypeWorkflowActivities
+                                              .Where(a => a.RequestTypeID == rt.RequestTypeID && a.WorkflowActivity.Start == true
+                                              && a.SecurityGroup.Users.Any(sgu => sgu.UserID == userID)
+                                              && a.ProjectID == project.ID
+                                              && a.PermissionID == DTO.Security.PermissionIdentifiers.ProjectRequestTypeWorkflowActivities.EditTask.ID
+                                              )
+                                      where (rt.RequestType.WorkflowID.HasValue && wAcls.Any(a => a.Allowed) && wAcls.All(a => a.Allowed))
+                                      && projects.Contains(project.ID)
+                                      select new CNDSSourceRequestTypeDTO
+                                      {
+                                          ProjectID = project.ID,
+                                          Project = project.Name,
+                                          RequestTypeID = rt.RequestTypeID,
+                                          RequestType = rt.RequestType.Name,
+                                          LocalRoutes = (
+                                                                      from dm in project.DataMarts
+                                                                      let rtAcls = DataContext.ProjectRequestTypeAcls.Where(a => a.RequestTypeID == rt.RequestTypeID && a.ProjectID == dm.ProjectID && a.SecurityGroup.Users.Any(u => u.UserID == userID)).Select(a => a.Permission)
+                                                                                  .Concat(DataContext.DataMartRequestTypeAcls.Where(a => a.RequestTypeID == rt.RequestTypeID && a.DataMartID == dm.DataMartID && a.SecurityGroup.Users.Any(sgu => sgu.UserID == userID)).Select(a => a.Permission))
+                                                                                  .Concat(DataContext.ProjectDataMartRequestTypeAcls.Where(a => a.RequestTypeID == rt.RequestTypeID && a.ProjectID == dm.ProjectID && a.DataMartID == dm.DataMartID && a.SecurityGroup.Users.Any(sgu => sgu.UserID == userID)).Select(a => a.Permission))
+                                                                      where localDataMartIds.Contains(dm.DataMartID) && (rtAcls.Any(a => a != DTO.Enums.RequestTypePermissions.Deny) && rtAcls.All(a => a != DTO.Enums.RequestTypePermissions.Deny))
+                                                                      orderby dm.DataMart.Name
+                                                                      select new CNDSSourceRequestTypeRoutingDTO
+                                                                      {
+                                                                          IsLocal = true,
+                                                                          NetworkID = netID,
+                                                                          Network = netName,
+                                                                          ProjectID = project.ID,
+                                                                          Project = project.Name,
+                                                                          RequestTypeID = rt.RequestTypeID,
+                                                                          RequestType = rt.RequestType.Name,
+                                                                          DataMartID = dm.DataMartID,
+                                                                          DataMart = dm.DataMart.Name
+                                                                      }
+                                                                    )
+                                      }
+                                          ).ToArrayAsync();
+
+
+
+
+            var networkMappings = await CNDSApi.RequestTypeMapping.FindMappings(requestTypes.Select(rt => new Lpp.CNDS.DTO.NetworkProjectRequestTypeDataMartDTO { NetworkID = localNetwork.ID, ProjectID = rt.ProjectID, RequestTypeID = rt.RequestTypeID }).ToArray());
+
+            foreach (var item in requestTypes)
+            {
+                var sourceMapping = networkMappings.Where(m => m.NetworkID == localNetwork.ID && m.ProjectID == item.ProjectID && m.RequestTypeID == item.RequestTypeID).FirstOrDefault();
+                if (sourceMapping != null)
+                {
+                    item.ExternalRoutes = sourceMapping.Routes.Where(rt => id.Contains(rt.DataSourceID))
+                                                .Select(rt => new CNDSSourceRequestTypeRoutingDTO
+                                                {
+                                                    MappingDefinitionID = rt.ID,
+                                                    IsLocal = rt.NetworkID == localNetwork.ID && rt.ProjectID == item.ProjectID,
+                                                    NetworkID = rt.NetworkID,
+                                                    Network = rt.Network,
+                                                    ProjectID = rt.ProjectID,
+                                                    Project = rt.Project,
+                                                    RequestTypeID = rt.RequestTypeID,
+                                                    RequestType = rt.RequestType,
+                                                    DataMartID = rt.DataSourceID,
+                                                    DataMart = rt.DataSource
+                                                }).OrderBy(rt => rt.Network).ThenBy(rt => rt.Project).ThenBy(rt => rt.DataMart).ToArray();
+                }
+                else
+                {
+                    item.ExternalRoutes = Array.Empty<CNDSSourceRequestTypeRoutingDTO>();
+                }
+
+                item.InvalidRoutes = externalDataSourceInformation
+                                        .Where(ds => !item.ExternalRoutes.Any(d => d.NetworkID == ds.NetworkID && ds.ID == d.DataMartID)
+                                        && !item.LocalRoutes.Any(d => d.NetworkID == localNetwork.ID && localDataMartIdentifiers.results.Any(i => i.EntityID == ds.ID && i.NetworkEntityID == d.DataMartID)))
+                                        .Select(ds => new CNDSSourceRequestTypeRoutingDTO { NetworkID = ds.NetworkID, Network = ds.Network, DataMartID = ds.ID.Value, DataMart = ds.Name, IsLocal = false })
+                                        .Distinct().OrderBy(ds => ds.Network).ThenBy(ds => ds.DataMart);
+
+            }
+
+            //filter out any that do not have any local or external routes
+            requestTypes = requestTypes.Where(rt => rt.LocalRoutes.Any() || rt.ExternalRoutes.Any()).ToArray();
+
+            return requestTypes;
         }
 
         /// <summary>
@@ -385,7 +493,23 @@ namespace Lpp.Dns.Api.CNDS
                 }
             }
         }
-    
+
+
+        /// <summary>
+        /// The CNDS and PMN ID link.
+        /// </summary>
+        internal class NetworkEntityIdentifier
+        {
+            /// <summary>
+            /// The ID of the entity in the PMN instance.
+            /// </summary>
+            public Guid EntityID { get; set; }
+            /// <summary>
+            /// The ID of the entity in CNDS>
+            /// </summary>
+            public Guid NetworkEntityID { get; set; }
+        }
+
 
 
     }

@@ -1,9 +1,14 @@
 /// <reference path="../../../../js/_rootlayout.ts" />
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var CNDS;
 (function (CNDS) {
     var Search;
@@ -53,9 +58,11 @@ var CNDS;
                     var _this = _super.call(this, bindingControl) || this;
                     var self = _this;
                     self.Domains = ko.observableArray(domains.map(function (item) { return new DomainsViewModel(item); }));
+                    ViewModel.RecursivlySortDS(self.Domains);
                     self.dsResults = new kendo.data.DataSource({
                         data: []
                     });
+                    self.EnableContinue = ko.observable(false);
                     return _this;
                 }
                 ViewModel.FindRecursiveDomain = function (data, ID, val) {
@@ -119,6 +126,13 @@ var CNDS;
                     }
                     return ids;
                 };
+                ViewModel.RecursivlySortDS = function (ds) {
+                    ds.sort(function (left, right) { return left.Title.toLowerCase() == right.Title.toLowerCase() ? 0 : (left.Title.toLowerCase() < right.Title.toLowerCase() ? -1 : 1); });
+                    ko.utils.arrayForEach(ds(), function (item) {
+                        if (item.ChildMetadata().length > 0)
+                            ViewModel.RecursivlySortDS(item.ChildMetadata);
+                    });
+                };
                 ViewModel.prototype.SelectDomain = function (data) {
                     var self = this;
                     if (data.CheckedValue() == false) {
@@ -152,6 +166,7 @@ var CNDS;
                         ko.utils.arrayForEach(results, function (item) {
                             self.dsResults.data().push(item);
                         });
+                        self.EnableContinue(results != null && results.length > 0);
                     });
                 };
                 ViewModel.prototype.NewRequest = function () {
@@ -162,6 +177,9 @@ var CNDS;
                             return;
                         ids += "&id=" + data.ID;
                     });
+                    if (ids.length < 4) {
+                        return;
+                    }
                     window.location.href = '/cnds/search/NewRequest?' + ids.slice(1);
                 };
                 ViewModel.prototype.ClearSearch = function () {

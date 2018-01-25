@@ -1,0 +1,58 @@
+﻿{
+  "DataSources": [
+    {
+      "ID": "811986E9-5A2A-4A5D-A959-A62700F92873",
+      "Name": "Lpp Test DM 1 Update",
+      "Acronym": "LPP1-DM1",
+      "OrganizationID": "CD50B39C-9A9E-48FB-91D0-A62700F623B0",
+      "Metadata": [
+        
+      ]
+    },
+    {
+      "ID": "BA5B7C10-7F98-4129-BC00-A62700FC5258",
+      "Name": "Lpp Test DM 2 Update",
+      "Acronym": "LPP1-DM2",
+      "OrganizationID": "CD50B39C-9A9E-48FB-91D0-A62700F623B0",
+      "Metadata": [
+       
+      ]
+    },
+    {
+      "ID": "F55567AE-EE93-4767-954B-A62700FC674B",
+      "Name": "Lpp Test DM 3 Update",
+      "Acronym": "LPP1-DM3",
+      "OrganizationID": "CD50B39C-9A9E-48FB-91D0-A62700F623B0",
+      "Metadata": [
+       
+      ]
+    },
+    {
+      "ID": "686AC089-DD74-4045-8A37-A62700FCF7BD",
+      "Name": "Lpp Test DM 1 Update",
+      "Acronym": "LPP2-DM1",
+      "OrganizationID": "8EDD0AF4-29CE-4B82-8D85-A62700F8EFDF",
+      "Metadata": [
+        
+      ]
+    },
+    {
+      "ID": "AAC2A55E-C53A-4651-9C3E-A62700FD09BD",
+      "Name": "Lpp Test DM 2 Update",
+      "Acronym": "LPP2-DM2",
+      "OrganizationID": "8EDD0AF4-29CE-4B82-8D85-A62700F8EFDF",
+      "Metadata": [
+       
+      ]
+    },
+    {
+      "ID": "63435BCB-60F8-45BE-94B9-A62700FD169D",
+      "Name": "Lpp 2 Test DM 3 Update",
+      "Acronym": "LPP2-DM3",
+      "OrganizationID": "8EDD0AF4-29CE-4B82-8D85-A62700F8EFDF",
+      "Metadata": [
+       
+      ]
+    }
+  ]
+}

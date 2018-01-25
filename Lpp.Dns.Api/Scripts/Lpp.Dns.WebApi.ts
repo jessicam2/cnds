@@ -3707,7 +3707,7 @@ module Dns.WebApi {
 	 	 	 return Helpers.DeleteAPIValue<any[]>('CNDSRequestTypes/DeleteMapping' + params, doNotHandleFail);
 	 	 }
 
-	 	 public static AvailableRequestTypesForNewRequest($filter?: string, $select?: string, $orderby?: string, $skip?: number, $top?: number, doNotHandleFail?: boolean):JQueryDeferred<Dns.Interfaces.ICNDSExternalRequestTypeSelectionItemDTO[]>{
+	 	 public static AvailableRequestTypesForNewRequestOriginal($filter?: string, $select?: string, $orderby?: string, $skip?: number, $top?: number, doNotHandleFail?: boolean):JQueryDeferred<Dns.Interfaces.ICNDSExternalRequestTypeSelectionItemDTO[]>{
 	 	 	 var params = '';
              if($filter) params += '&$filter=' + $filter;
 			if($select) params += '&$select=' + $select;
@@ -3717,7 +3717,22 @@ module Dns.WebApi {
 	 	 	 if (params.length > 0)
 	 	 	 	 params = '?' + params.substr(1);
 
-	 	 	 return Helpers.GetAPIResult<Dns.Interfaces.ICNDSExternalRequestTypeSelectionItemDTO[]>('CNDSRequestTypes/AvailableRequestTypesForNewRequest' + params, doNotHandleFail);
+	 	 	 return Helpers.GetAPIResult<Dns.Interfaces.ICNDSExternalRequestTypeSelectionItemDTO[]>('CNDSRequestTypes/AvailableRequestTypesForNewRequestOriginal' + params, doNotHandleFail);
+	 	 }
+
+	 	 public static AvailableRequestTypesForNewRequest(id: any[],$filter?: string, $select?: string, $orderby?: string, $skip?: number, $top?: number, doNotHandleFail?: boolean):JQueryDeferred<Dns.Interfaces.ICNDSSourceRequestTypeDTO[]>{
+	 	 	 var params = '';
+	 	 	 if (id != null)
+	 	 	 	 for(var j = 0; j < id.length; j++) { params += '&id=' + id[j]; }
+             if($filter) params += '&$filter=' + $filter;
+			if($select) params += '&$select=' + $select;
+			if($orderby) params += '&$orderby=' + $orderby;
+			if($skip) params += '&$skip=' + $skip;
+			if($top) params += '&$top=' + $top;
+	 	 	 if (params.length > 0)
+	 	 	 	 params = '?' + params.substr(1);
+
+	 	 	 return Helpers.GetAPIResult<Dns.Interfaces.ICNDSSourceRequestTypeDTO[]>('CNDSRequestTypes/AvailableRequestTypesForNewRequest' + params, doNotHandleFail);
 	 	 }
 
 	 	 public static ListNetworkRequestTypeDefinitions($filter?: string, $select?: string, $orderby?: string, $skip?: number, $top?: number, doNotHandleFail?: boolean):JQueryDeferred<Dns.Interfaces.ICNDSNetworkRequestTypeDefinitionDTO[]>{
@@ -4001,7 +4016,7 @@ module Dns.WebApi {
             }
 
             static PostAPIValue<T>(url: string, value: any, doNotHandleFail?: boolean): JQueryDeferred<T> {
-                var d = jQuery.Deferred();
+                var d = jQuery.Deferred<T>();
                 if (!jQuery.support.cors) {
                     url = '/api/post?Url=' + encodeURIComponent(url);
                 } else {
@@ -4046,7 +4061,7 @@ module Dns.WebApi {
             }
 
             static PutAPIValue<T>(url: string, value: any, doNotHandleFail?: boolean): JQueryDeferred<T> {
-                var d = jQuery.Deferred();
+                var d = jQuery.Deferred<T>();
                 if (!jQuery.support.cors) {
                     url = '/api/put?Url=' + encodeURIComponent(url);
                 } else {

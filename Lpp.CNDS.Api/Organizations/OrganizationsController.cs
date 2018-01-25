@@ -267,18 +267,45 @@ namespace Lpp.CNDS.Api.Organizations
         public async Task<IEnumerable<OrganizationSearchDTO>> OrganizationSearch(SearchDTO ids)
         {
 
+            //*****Summary of Execution*******
+            // ALL Domains and DomainReferences are ANDed together except for Container 
+            // (due to its DomainUseID will never be in the DomainData Table cause it will never have a value).
+            // Now in a specific occasion References will be ommited, and that is if none of its children are selected.
+
             var domainUseIDs = await (from d in DataContext.Domains.AsNoTracking()
                                       join du in DataContext.DomainUses on d.ID equals du.DomainID
-                                      where ids.DomainIDs.Contains(d.ID) && d.DataType != "container" && d.DataType != "booleanGroup" && du.EntityType == EntityType.Organization
-                                      select du.ID).ToListAsync();
+                                      where ids.DomainIDs.Contains(d.ID) && d.DataType != "container" && du.EntityType == EntityType.Organization
+                                      select new {
+                                          DomainUseID = du.ID,
+                                          DataType = d.DataType
+                                      }).ToListAsync();
+
+            var filterBasedDomainReferences = from d in DataContext.Domains.AsNoTracking()
+                                              join dr in DataContext.DomainReferences on d.ID equals dr.DomainID
+                                              join du in DataContext.DomainUses on d.ID equals du.DomainID
+                                              where ids.DomainReferencesIDs.Contains(dr.ID) && du.EntityType == EntityType.Organization && !d.Deleted && !du.Deleted
+                                              select du.ID;
+
+
+            List<Guid> DomainUseToRemove = new List<Guid>();
+
+            foreach (var id in domainUseIDs.Where(x => x.DataType == "reference").Select(x => x.DomainUseID))
+            {
+                bool toBeFiltered = filterBasedDomainReferences.Any(x => x == id);
+                if (!toBeFiltered)
+                    DomainUseToRemove.Add(id);
+            }
+
+
+            var newDomainUseID = domainUseIDs.Where(x => !DomainUseToRemove.Contains(x.DomainUseID)).Select(x => x.DomainUseID);
 
             var query = await (from odd in DataContext.DomainDatas.OfType<OrganizationDomainData>().AsNoTracking()
                                join ooa in DataContext.DomainAccess.OfType<OrganizationDomainAccess>().AsNoTracking() on new { odd.DomainUseID, odd.OrganizationID } equals new { ooa.DomainUseID, ooa.OrganizationID }
                                join o in DataContext.Organizations on ooa.OrganizationID equals o.ID
                                join ne in DataContext.NetworkEntities on o.ID equals ne.ID
                                where odd.Value != "false" && odd.Value.Trim() != ""
-                               && (ids.DomainReferencesIDs.Count() == 0 ? domainUseIDs.Contains(odd.DomainUseID) : true)
-                               && (ids.DomainReferencesIDs.Count() > 0 ? domainUseIDs.Contains(odd.DomainUseID) || ids.DomainReferencesIDs.Contains(odd.DomainReferenceID.Value) : true)
+                               && (ids.DomainReferencesIDs.Count() == 0 ? newDomainUseID.Contains(odd.DomainUseID) : true)
+                               && (ids.DomainReferencesIDs.Count() > 0 ? newDomainUseID.Contains(odd.DomainUseID) || ids.DomainReferencesIDs.Contains(odd.DomainReferenceID.Value) : true)
                                && (ooa.AccessType == AccessType.NoOne ? false : ooa.AccessType == AccessType.MyNetwork ? ne.NetworkID == ids.NetworkID : true)
                                group new { odd.DomainUseID, odd.DomainReferenceID } by odd.OrganizationID into res
                                select new
@@ -289,8 +316,8 @@ namespace Lpp.CNDS.Api.Organizations
                                }).ToArrayAsync();
 
             var dsIDs = query.Where(x =>
-                                    (ids.DomainReferencesIDs.Count() == 0 ? x.DomainUseIDs.Count() == domainUseIDs.Count() : true)
-                                    && (ids.DomainReferencesIDs.Count() > 0 ? x.DomainUseIDs.Count() == domainUseIDs.Count() && x.DomainReferenceIDs.Count() == ids.DomainReferencesIDs.Count() : true
+                                    (ids.DomainReferencesIDs.Count() == 0 ? x.DomainUseIDs.Count() == newDomainUseID.Count() : true)
+                                    && (ids.DomainReferencesIDs.Count() > 0 ? x.DomainUseIDs.Count() == newDomainUseID.Count() && x.DomainReferenceIDs.Count() == ids.DomainReferencesIDs.Count() : true
                                     )).Select(x => x.ID).ToList();
 
 

@@ -1287,6 +1287,31 @@ var Dns;
                 'SecurityGroups': { type: 'any[]', nullable: false },
             }
         };
+        Interfaces.KendoModelCNDSSourceRequestTypeDTO = {
+            fields: {
+                'ProjectID': { type: 'any', nullable: false },
+                'Project': { type: 'string', nullable: false },
+                'RequestTypeID': { type: 'any', nullable: false },
+                'RequestType': { type: 'string', nullable: false },
+                'LocalRoutes': { type: 'any[]', nullable: false },
+                'ExternalRoutes': { type: 'any[]', nullable: false },
+                'InvalidRoutes': { type: 'any[]', nullable: false },
+            }
+        };
+        Interfaces.KendoModelCNDSSourceRequestTypeRoutingDTO = {
+            fields: {
+                'MappingDefinitionID': { type: 'any', nullable: true },
+                'NetworkID': { type: 'any', nullable: false },
+                'Network': { type: 'string', nullable: false },
+                'ProjectID': { type: 'any', nullable: false },
+                'Project': { type: 'string', nullable: false },
+                'RequestTypeID': { type: 'any', nullable: false },
+                'RequestType': { type: 'string', nullable: false },
+                'DataMartID': { type: 'any', nullable: false },
+                'DataMart': { type: 'string', nullable: false },
+                'IsLocal': { type: 'boolean', nullable: false },
+            }
+        };
         Interfaces.KendoModelCNDSMappingItemDTO = {
             fields: {
                 'ID': { type: 'any', nullable: false },
@@ -2973,7 +2998,7 @@ var Dns;
         };
         Interfaces.KendoModelCNDSNetworkProjectRequestTypeDataMartDTO = {
             fields: {
-                'DefinitionID': { type: 'any', nullable: false },
+                'DefinitionID': { type: 'any', nullable: true },
                 'NetworkID': { type: 'any', nullable: false },
                 'Network': { type: 'string', nullable: false },
                 'ProjectID': { type: 'any', nullable: false },

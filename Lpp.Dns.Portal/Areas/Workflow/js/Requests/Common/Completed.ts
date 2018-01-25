@@ -6,6 +6,7 @@ module Workflow.Common.Completed {
     export class VirtualRoutingViewModel {
         public ID: any;
         public Name: string = '';
+        public DataMartID: any;
         public IsGroup: boolean = false;
         public ResponseTime: Date;
         public Status: Dns.Enums.RoutingStatus = Dns.Enums.RoutingStatus.AwaitingResponseApproval;
@@ -24,6 +25,7 @@ module Workflow.Common.Completed {
             } else {
                 this.ID = routing.ResponseID;
                 this.Name = routing.DataMart;
+                this.DataMartID = routing.DataMartID;
             }
 
             this.ResponseTime = routing.ResponseTime;

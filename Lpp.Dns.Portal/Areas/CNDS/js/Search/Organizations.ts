@@ -61,6 +61,8 @@ module CNDS.Search.Organizations_NoQlik {
             let self = this;
             self.Domains = ko.observableArray(domains.map((item) => { return new DomainsViewModel(item) }));
 
+            ViewModel.RecursivlySortDS(self.Domains);
+
             self.dsResults = new kendo.data.DataSource({
                 data: []
             });
@@ -131,6 +133,14 @@ module CNDS.Search.Organizations_NoQlik {
             return ids;
         }
 
+        static RecursivlySortDS(ds: KnockoutObservableArray<DomainsViewModel>) {
+            ds.sort(function (left, right) { return left.Title.toLowerCase() == right.Title.toLowerCase() ? 0 : (left.Title.toLowerCase() < right.Title.toLowerCase() ? -1 : 1) });
+            ko.utils.arrayForEach(ds(), (item) => {
+                if (item.ChildMetadata().length > 0)
+                    ViewModel.RecursivlySortDS(item.ChildMetadata);
+            });
+        }
+
         public SelectDomain(data: DomainsViewModel) {
             let self = this;
             if (data.CheckedValue() == false) {
@@ -168,6 +178,13 @@ module CNDS.Search.Organizations_NoQlik {
                     self.dsResults.data().push(item);
                 })
             })
+        }
+
+        public ClearSearch() {
+            let self = this;
+            ko.utils.arrayForEach(self.Domains(), (item) => {
+                item.CheckedValue(false);
+            });
         }
 
         public FormatExcelExport(e) {
